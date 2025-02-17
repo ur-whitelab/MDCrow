@@ -1,15 +1,4 @@
-from .analysis_tools.bond_angles_dihedrals_tool import (
-    ComputeAngles,
-    ComputeChi1,
-    ComputeChi2,
-    ComputeChi3,
-    ComputeChi4,
-    ComputeDihedrals,
-    ComputeOmega,
-    ComputePhi,
-    ComputePsi,
-    RamachandranPlot,
-)
+from .analysis_tools.bond_angles_dihedrals_tool import ComputeAngles
 from .analysis_tools.distance_tools import ContactsTool, DistanceMatrixTool
 from .analysis_tools.inertia import MomentOfInertia
 from .analysis_tools.pca_tools import PCATool
