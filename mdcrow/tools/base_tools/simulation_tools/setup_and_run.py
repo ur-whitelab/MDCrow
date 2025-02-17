@@ -723,14 +723,22 @@ class OpenMMSimulation:
             system.addForce(MonteCarloBarostat(pressure, temperature, barostatInterval))
             """
 
-        if integrator_type == "LangevinMiddle" and constraints != "None":
+        if (
+            integrator_type == "LangevinMiddle"
+            and constraints != "None"
+            and constraints
+        ):
+            print("Constraints must be set to 'None' for LangevinMiddle integrator.")
+            print(integrator_type, "constraints: ", constraints)
             script_content += """
         integrator = LangevinMiddleIntegrator(temperature, friction, dt)
         integrator.setConstraintTolerance(constraintTolerance)
         simulation = Simulation(modeller.topology, system, integrator, platform)
         simulation.context.setPositions(modeller.positions)
         """
-        if integrator_type == "LangevinMiddle" and constraints == "None":
+        if integrator_type == "LangevinMiddle" and (
+            constraints == "None" or constraints is None
+        ):
             script_content += """
             integrator = LangevinMiddleIntegrator(temperature, friction, dt)
             simulation = Simulation(modeller.topology, system, integrator, platform)
@@ -742,6 +750,15 @@ class OpenMMSimulation:
 
         print('Performing energy minimization...')
         simulation.minimizeEnergy()
+        ## Save initial positions
+        top_name = 'simulation_initial_positions.pdb'
+        top_description = 'Initial positions of the simulation'
+        with open(top_name, "w") as f:
+            \tPDBFile.writeFile(
+                \tsimulation.topology,
+                \tsimulation.context.getState(getPositions=True).getPositions(),
+                \tf,
+            \t)
         print('Equilibrating...')
         simulation.context.setVelocitiesToTemperature(temperature)
         simulation.step(equilibrationSteps)

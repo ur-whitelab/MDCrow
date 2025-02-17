@@ -1,3 +1,4 @@
+import os
 import textwrap
 from typing import Optional
 
@@ -16,7 +17,7 @@ class ModifyScriptUtils:
     def __init__(self, llm):
         self.llm = llm
 
-    def _prompt_summary(self, query: str):
+    def _prompt_summary(self, task: dict):
         if not self.llm:
             raise ValueError("No language model provided at ModifyScriptTool")
 
@@ -50,7 +51,7 @@ class ModifyScriptUtils:
         )
         llm_chain = prompt | self.llm | StrOutputParser()
 
-        return llm_chain.invoke(query)
+        return llm_chain.invoke(task)
 
         # Remove leading spaces for proper formatting
 
@@ -61,15 +62,16 @@ class ModifyScriptUtils:
 
 
 class ModifyScriptInput(BaseModel):
+    script_id: str = Field(..., description=" File ID of the simulation script file")
     query: str = Field(
         ...,
         description=(
-            "simulation required by the user.You MUST "
-            "specify the objective, requirements of the simulation as well "
+            "simulation required by the user. Be as descriptive as possible"
+            " including requirements of the simulation, such as the forcefields, "
+            "integrator, and constraints. Also, mention the protein you are working on."
             "as on what protein you are working."
         ),
     )
-    script: str = Field(..., description=" simulation ID of the base script file")
 
 
 class ModifyBaseSimulationScriptTool(BaseTool):
@@ -82,25 +84,33 @@ class ModifyBaseSimulationScriptTool(BaseTool):
     args_schema = ModifyScriptInput
     llm: Optional[BaseLanguageModel]
     path_registry: Optional[PathRegistry]
+    safe_mode: Optional[bool]
 
-    def __init__(self, path_registry: Optional[PathRegistry], llm):
+    def __init__(self, path_registry, llm, safe_mode=False):
         super().__init__()
         self.path_registry = path_registry
         self.llm = llm
+        self.safe_mode = safe_mode
 
-    def _run(self, *args, **input):
-        if len(args) > 0:
-            return (
-                "Failed. This tool expects you to provide the input as a "
-                "dictionary: {'query': 'your query', 'script': 'script id'}"
-            )
+    def _run(self, script_id: str, query: str) -> str:
+        # if len(args) > 0:
+        #     return (
+        #         "Failed. This tool expects you to provide the input as a "
+        #         "dictionary: {'query': 'your query', 'script': 'script id'}"
+        #     )
         if not self.path_registry:
             return "Failed. No path registry provided"  # this should not happen
-        base_script_id = input.get("script")
+        base_script_id = script_id
         if not base_script_id:
             return (
                 "Failed. No id provided. The keys for the input are: "
-                "query' and 'script'"
+                "query' and 'script_id'"
+            )
+        current_ids = self.path_registry.list_path_names()
+        if base_script_id not in current_ids:
+            return (
+                f"Failed. File ID not found: {base_script_id}, make sure "
+                "the script ID is correct"
             )
         try:
             base_script_path = self.path_registry.get_mapped_path(base_script_id)
@@ -109,18 +119,24 @@ class ModifyBaseSimulationScriptTool(BaseTool):
                 parts[-1]
         except Exception as e:
             return f"Failed. Error getting path from file id: {e}"
-        with open(base_script_path, "r") as file:
-            base_script = file.read()
+        if os.path.exists(base_script_path):
+            with open(base_script_path, "r") as file:
+                base_script = file.read()
+        else:
+            return f"Failed. File not found: {base_script_id}"
+
         base_script = "".join(base_script)
         utils = ModifyScriptUtils(self.llm)
 
-        description = input.get("query")
+        description = query
         answer = utils._prompt_summary(
-            query={"base_script": base_script, "query": description}
+            task={"base_script": base_script, "query": description}
         )
-        script = answer["text"]
-        thoughts, new_script = script.split("SCRIPT:")
-        script_content = utils.remove_leading_spaces(new_script)
+        print("This the answer from the LLM\n\n", answer)
+        # script = answer["text"]
+        thoughts, new_script = answer.split("SCRIPT:")
+        # script_content = utils.remove_leading_spaces(new_script)
+        script_content = new_script
         if "FINAL THOUGHTS:" in script_content:
             script_content, final_thoughts = script_content.split("FINAL THOUGHTS:")
         # replace ''' with #
@@ -135,8 +151,21 @@ class ModifyBaseSimulationScriptTool(BaseTool):
         with open(f"{directory}/{filename}", "w") as file:
             file.write(script_content)
 
-        self.path_registry.map_path(file_id, filename, description)
-        return f"Succeeded. Script modified successfully. Modified Script ID: {file_id}"
+        self.path_registry.map_path(file_id, f"{directory}/{filename}", description)
+        # if safe mode is on, return the file id
+        if self.safe_mode:
+            return f"Succeeded. Script modified successfully. Modified Script ID: {file_id}"
+        # if safe mode is off, try to run the script
+        try:
+            exec(script_content)
+            return f"Succeeded. Script modified and ran \
+                successfully. Modified Script ID: {file_id}"
+        except Exception as e:
+            return (
+                f"Failed. Error running the script: {e}."
+                "Modified Script ID: {file_id}. If you want to try to correct the "
+                "script, use the file id of the modified to correct the script."
+            )
 
     async def _arun(self, query) -> str:
         """Use the tool asynchronously."""

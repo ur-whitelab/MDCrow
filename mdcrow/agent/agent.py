@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 from langchain.agents import AgentExecutor, OpenAIFunctionsAgent
@@ -46,6 +47,7 @@ class MDCrow:
         uploaded_files=[],  # user input files to add to path registry
         run_id="",
         use_memory=False,
+        safe_mode=False,
         paper_dir=None,  # papers for pqa, relative path within repo
     ):
         self.llm = _make_llm(model, temp, streaming)
@@ -60,8 +62,8 @@ class MDCrow:
         self.run_id = self.memory.run_id
 
         self.uploaded_files = uploaded_files
-        for file in uploaded_files:  # todo -> allow users to add descriptions?
-            self.path_registry.map_path(file, file, description="User uploaded file")
+        # for file in uploaded_files:  # todo -> allow users to add descriptions?
+        # self.path_registry.map_path(file, file, description="User uploaded file")
 
         self.agent = None
         self.agent_type = agent_type
@@ -69,6 +71,43 @@ class MDCrow:
         self.use_human_tool = use_human_tool
         self.user_tools = tools
         self.verbose = verbose
+
+        if self.uploaded_files:
+            self.add_file(self.uploaded_files)
+        self.safe_mode = safe_mode
+
+    def _add_single_file(self, file_path, description=None):
+        now = datetime.now()
+        # Format the date and time as "YYYYMMDD_HHMMSS"
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
+        i = 0
+        ID = "UPL_" + str(i) + timestamp
+        while ID in self.path_registry.list_path_names():  # check if ID already exists
+            i += 1
+            ID = "UPL_" + str(i) + timestamp
+        if not description:
+            # asks for user input to add description for file file_path
+            # wait for 20 seconds or set up a default description
+            description = "User uploaded file"
+        print(f"Adding file {file_path} with ID {ID}\n")
+        self.path_registry.map_path(ID, file_path, description=description)
+
+    def add_file(self, uploaded_files):
+        if type(uploaded_files) == str:
+            self._add_single_file(uploaded_files)
+        elif type(uploaded_files) == tuple:
+            self._add_single_file(uploaded_files[0], description=uploaded_files[1])
+        elif type(uploaded_files) == list:
+            for file_path in uploaded_files:
+                print(f"Adding file {file_path}\n")
+                print(type(file_path))
+                self.add_file(file_path)
+        else:
+            raise ValueError(
+                "Invalid input. Please provide a file path \
+                             or list of file paths. Optionally, tuple or list of tuples\
+                             of file path and description"
+            )
 
     def _initialize_tools_and_agent(self, user_input=None):
         """Retrieve tools and initialize the agent."""
@@ -88,6 +127,7 @@ class MDCrow:
                 self.tools = make_all_tools(
                     self.tools_llm,
                     human=self.use_human_tool,
+                    safe_mode=self.safe_mode,
                 )
         return AgentExecutor.from_agent_and_tools(
             tools=self.tools,
