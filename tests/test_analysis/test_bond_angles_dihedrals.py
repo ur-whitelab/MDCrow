@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from mdagent.tools.base_tools.analysis_tools.bond_angles_dihedrals_tool import (
+from mdcrow.tools.base_tools.analysis_tools.bond_angles_dihedrals_tool import (
     ComputeAngles,
 )
 
