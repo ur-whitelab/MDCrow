@@ -515,8 +515,6 @@ def test_get_gene_names(query_uniprot):
     assert all(gene in all_genes for gene in specific_gene)
 
 
-# skip it because of server error
-@pytest.mark.skip(reason="Server error")
 def test_get_sequence_mapping(query_uniprot):
     identifiers = [
         "1A00",
