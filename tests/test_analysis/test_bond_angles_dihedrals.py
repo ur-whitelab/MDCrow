@@ -34,7 +34,7 @@ def test_compute_angles_ram_values(get_registry):
     }
 
     with patch(
-        "mdagent.tools.base_tools.analysis_tools.ComputeAngles.compute_and_plot_phi_psi"
+        "mdcrow.tools.base_tools.analysis_tools.ComputeAngles.compute_and_plot_phi_psi"
     ) as mock_compute_and_plot_phi_psi:
         with patch(
             "mdcrow.tools.base_tools.analysis_tools.ComputeAngles.compute_plot_all_chi_angles"
