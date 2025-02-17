@@ -6,7 +6,7 @@ import numpy as np
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 
-from mdagent.utils import FileType, PathRegistry, load_single_traj
+from mdcrow.utils import FileType, PathRegistry, load_single_traj
 
 
 class ComputingAnglesSchema(BaseModel):
