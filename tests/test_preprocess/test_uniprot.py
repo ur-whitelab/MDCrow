@@ -1,6 +1,6 @@
 import pytest
 
-from mdagent.tools.base_tools.preprocess_tools.uniprot import (
+from mdcrow.tools.base_tools.preprocess_tools.uniprot import (
     GetAllKnownSites,
     QueryUniprot,
 )

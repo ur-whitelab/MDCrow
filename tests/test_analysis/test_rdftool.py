@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.rdf_tool import RDFTool
+from mdcrow.tools.base_tools.analysis_tools.rdf_tool import RDFTool
 
 # TODO add dcd files in testing file for testing
 

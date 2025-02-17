@@ -3,8 +3,8 @@ from unittest.mock import patch
 import mdtraj as md
 import numpy as np
 
-from mdagent.tools.base_tools import PCATool
-from mdagent.tools.base_tools.analysis_tools.pca_tools import PCA_analysis
+from mdcrow.tools.base_tools import PCATool
+from mdcrow.tools.base_tools.analysis_tools.pca_tools import PCA_analysis
 
 
 def test_pca_tool_bad_inputs(get_registry):

@@ -2,7 +2,7 @@ import pytest
 from openmm import unit
 from openmm.app import PME, NoCutoff
 
-from mdagent.tools.base_tools.simulation_tools.setup_and_run import OpenMMSimulation
+from mdcrow.tools.base_tools.simulation_tools.setup_and_run import OpenMMSimulation
 
 
 @pytest.fixture

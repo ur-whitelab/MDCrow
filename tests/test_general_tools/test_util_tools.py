@@ -7,8 +7,8 @@ from unittest.mock import mock_open, patch
 
 import pytest
 
-from mdagent.agent.agent import MDAgent
-from mdagent.utils import FileType, PathRegistry, SetCheckpoint
+from mdcrow.agent.agent import MDCrow
+from mdcrow.utils import FileType, PathRegistry, SetCheckpoint
 
 
 @pytest.fixture
@@ -231,10 +231,10 @@ def test_path_registry_ckpt(get_registry):
         assert os.path.isdir(ckpt)
 
 
-def test_mdagent_w_ckpt():
+def test_mdcrow_w_ckpt():
     dummy_test_dir = "ckpt_test"
-    mdagent = MDAgent(ckpt_dir=dummy_test_dir)
-    dummy_test_path = mdagent.path_registry.ckpt_dir
+    mdcrow = MDCrow(ckpt_dir=dummy_test_dir)
+    dummy_test_path = mdcrow.path_registry.ckpt_dir
     assert os.path.exists(dummy_test_path)
     assert dummy_test_dir in dummy_test_path
 

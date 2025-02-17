@@ -1,6 +1,6 @@
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.rgy import (
+from mdcrow.tools.base_tools.analysis_tools.rgy import (
     RadiusofGyration,
     RadiusofGyrationTool,
 )

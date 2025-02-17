@@ -2,7 +2,7 @@ import mdtraj as md
 import numpy as np
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.secondary_structure import (
+from mdcrow.tools.base_tools.analysis_tools.secondary_structure import (
     ComputeAcylindricity,
     ComputeAsphericity,
     ComputeDSSP,

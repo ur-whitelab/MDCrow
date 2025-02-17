@@ -6,7 +6,7 @@ import mdtraj as md
 import numpy as np
 import pytest
 
-from mdagent.utils import PathRegistry
+from mdcrow.utils import PathRegistry
 
 
 def safe_remove(file_path):

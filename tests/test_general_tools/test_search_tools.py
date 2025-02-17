@@ -1,7 +1,7 @@
 import pytest
 from langchain_openai import ChatOpenAI
 
-from mdagent.tools.base_tools import Scholar2ResultLLM
+from mdcrow.tools.base_tools import Scholar2ResultLLM
 
 
 @pytest.fixture

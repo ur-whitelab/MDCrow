@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from mdagent.tools.base_tools import VisFunctions
-from mdagent.tools.base_tools.analysis_tools.plot_tools import PlottingTools
+from mdcrow.tools.base_tools import VisFunctions
+from mdcrow.tools.base_tools.analysis_tools.plot_tools import PlottingTools
 
 
 @pytest.fixture

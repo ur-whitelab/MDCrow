@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from mdagent.tools.maketools import get_relevant_tools
+from mdcrow.tools.maketools import get_relevant_tools
 
 
 @pytest.fixture
@@ -21,8 +21,8 @@ def mock_tools():
     return [tool1, tool2, tool3]
 
 
-@patch("mdagent.tools.maketools.make_all_tools")
-@patch("mdagent.tools.maketools.OpenAIEmbeddings")
+@patch("mdcrow.tools.maketools.make_all_tools")
+@patch("mdcrow.tools.maketools.OpenAIEmbeddings")
 def test_get_relevant_tools_with_openai_embeddings(
     mock_openai_embeddings, mock_make_all_tools, mock_llm, mock_tools
 ):
@@ -41,8 +41,8 @@ def test_get_relevant_tools_with_openai_embeddings(
         assert relevant_tools[1] in mock_tools
 
 
-@patch("mdagent.tools.maketools.make_all_tools")
-@patch("mdagent.tools.maketools.TfidfVectorizer")
+@patch("mdcrow.tools.maketools.make_all_tools")
+@patch("mdcrow.tools.maketools.TfidfVectorizer")
 def test_get_relevant_tools_with_tfidf(
     mock_tfidf_vectorizer, mock_make_all_tools, mock_llm, mock_tools
 ):
@@ -58,7 +58,7 @@ def test_get_relevant_tools_with_tfidf(
         assert relevant_tools[1] in mock_tools
 
 
-@patch("mdagent.tools.maketools.make_all_tools")
+@patch("mdcrow.tools.maketools.make_all_tools")
 def test_get_relevant_tools_with_no_tools(mock_make_all_tools, mock_llm):
     mock_make_all_tools.return_value = []
 
@@ -67,8 +67,8 @@ def test_get_relevant_tools_with_no_tools(mock_make_all_tools, mock_llm):
         assert relevant_tools is None
 
 
-@patch("mdagent.tools.maketools.make_all_tools")
-@patch("mdagent.tools.maketools.OpenAIEmbeddings")
+@patch("mdcrow.tools.maketools.make_all_tools")
+@patch("mdcrow.tools.maketools.OpenAIEmbeddings")
 def test_get_relevant_tools_with_openai_exception(
     mock_openai_embeddings, mock_make_all_tools, mock_llm, mock_tools
 ):
@@ -83,7 +83,7 @@ def test_get_relevant_tools_with_openai_exception(
         assert relevant_tools is None
 
 
-@patch("mdagent.tools.maketools.make_all_tools")
+@patch("mdcrow.tools.maketools.make_all_tools")
 def test_get_relevant_tools_top_k(mock_make_all_tools, mock_llm, mock_tools):
     mock_make_all_tools.return_value = mock_tools
 

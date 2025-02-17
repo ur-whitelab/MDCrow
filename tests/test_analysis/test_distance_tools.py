@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.distance_tools import DistanceToolsUtils
+from mdcrow.tools.base_tools.analysis_tools.distance_tools import DistanceToolsUtils
 
 
 @pytest.fixture(scope="module")

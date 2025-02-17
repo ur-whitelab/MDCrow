@@ -1,8 +1,8 @@
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.ppi_tools import ppi_distance
-from mdagent.tools.base_tools.analysis_tools.rmsd_tools import lprmsd, rmsd, rmsf
-from mdagent.utils import load_traj_with_ref
+from mdcrow.tools.base_tools.analysis_tools.ppi_tools import ppi_distance
+from mdcrow.tools.base_tools.analysis_tools.rmsd_tools import lprmsd, rmsd, rmsf
+from mdcrow.utils import load_traj_with_ref
 
 # pdb with two chains
 pdb_string = """
