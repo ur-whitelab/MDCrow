@@ -19,8 +19,6 @@ def test_compute_angles_tool_bad_inputs(get_registry):
     assert "Topology File ID not in path registry" in error_catching
 
 
-# patch and or moch save_results_to_file
-# @patch("mdagent.tools.base_tools.analysis_tools.bond_angles_dihedrals_tool.save_results_to_file")
 def test_compute_angles_ram_values(get_registry):
     reg = get_registry("raw", True, dynamic=True, include_hydrogens=True)
     angles_tool = ComputeAngles(path_registry=reg)
@@ -34,13 +32,12 @@ def test_compute_angles_ram_values(get_registry):
         "topology_fileid": "pep_traj_987654",
         "analysis": "chi1-chi2",
     }
-    # traj = md.load(reg.get_mapped_path("pep_traj_987654"))
 
     with patch(
         "mdagent.tools.base_tools.analysis_tools.ComputeAngles.compute_and_plot_phi_psi"
     ) as mock_compute_and_plot_phi_psi:
         with patch(
-            "mdagent.tools.base_tools.analysis_tools.ComputeAngles.compute_plot_all_chi_angles"
+            "mdcrow.tools.base_tools.analysis_tools.ComputeAngles.compute_plot_all_chi_angles"
         ) as compute_plot_all_chi_angles:
             mock_compute_and_plot_phi_psi.return_value = ("mockid", "mockresult")
             # instance.return_value = ("mockid", "mockresult")
