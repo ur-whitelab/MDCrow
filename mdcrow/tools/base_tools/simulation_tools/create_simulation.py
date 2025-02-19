@@ -21,22 +21,22 @@ class ModifyScriptUtils:
             raise ValueError("No language model provided at ModifyScriptTool")
 
         prompt_template = (
-            "You're an expert programmer and in molecular dynamics. "
+            "You're an expert in programming and in molecular dynamics. "
             "Your job is to make a script to make a simulation "
             "in openmm. "
-            "Youre starting point is a base script that runs a protein on its own. "
-            "The protein itself doesnt require more preperation. "
+            "Your starting point is a base script that runs a protein on its own. "
+            "The protein itself doesn't require more preparation. "
             "The forcefields, integrator, and constraints are already set up for you. "
-            "You need to add lines to fullfill the user requirement. "
+            "You need to add lines to fulfill the user requirement. "
             "Your answer has to be the modified script. "
             "Your answer should be a python script. "
-            "Dont use ''' to comment out the code, use # instead. "
+            "Don't use ''' to comment out the code; use # instead. "
             "Describe your thoughts and changes before you start writing the script. "
             "The script will be rum as it is, so make it completely. "
             "The format should be as follows: "
             "THOUGHTS: (Your thoughts as an openmm expert with the base "
             "script and the query) \n"
-            "CHANGES:(what modifications youre doing to the script)\n "
+            "CHANGES:(what modifications you're doing to the script)\n "
             "SCRIPT: (The COMPLETE modified script)\n "
             "FINAL THOUGHTS: (Optional, Any final thoughts or comments\n "
             "you have about the script\n "
@@ -64,8 +64,8 @@ class ModifyScriptInput(BaseModel):
     query: str = Field(
         ...,
         description=(
-            "simulation required by the user.You MUST "
-            "specify the objective, requirements of the simulation as well "
+            "simulation required by the user. You MUST "
+            "specify the objective, and requirements of the simulation as well "
             "as on what protein you are working."
         ),
     )
