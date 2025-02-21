@@ -11,7 +11,7 @@ from mdcrow.utils import PathRegistry, load_traj_with_ref, save_plot, save_to_cs
 def rmsd(path_registry, traj, ref_traj, mol_name, select="protein"):
     """
     Calculate the root mean square deviation (RMSD) of each selected atom.
-    Can be used for either protions or small molecules.
+    Can be used for either proteins or small molecules.
     """
     print("Calculating RMSD...")
     msg = ""
