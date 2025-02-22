@@ -358,12 +358,65 @@ def butane_trajectory_without_hydrogens(request):
 
 
 @pytest.fixture(scope="module")
+def small_peptide_gag_trajectory(request):
+    """
+    Writes out a small multi-model PDB with two frames of a Gly–Ala–Gly peptide.
+    Yields the filename so that tests can load and analyze phi/psi angles.
+    """
+    pdb_content = """\
+MODEL        1
+ATOM      1  N   GLY A   1       1.000   1.000   1.000  1.00  0.00           N
+ATOM      2  CA  GLY A   1       2.000   1.000   1.000  1.00  0.00           C
+ATOM      3  C   GLY A   1       2.500   2.250   1.000  1.00  0.00           C
+ATOM      4  O   GLY A   1       3.000   3.000   1.000  1.00  0.00           O
+ATOM      5  N   ALA A   2       1.700   2.900   1.000  1.00  0.00           N
+ATOM      6  CA  ALA A   2       2.000   4.300   1.100  1.00  0.00           C
+ATOM      7  CB  ALA A   2       1.000   5.250   1.000  1.00  0.00           C
+ATOM      8  C   ALA A   2       3.400   5.000   1.000  1.00  0.00           C
+ATOM      9  O   ALA A   2       4.100   5.900   1.500  1.00  0.00           O
+ATOM     10  N   GLY A   3       3.900   4.300   0.200  1.00  0.00           N
+ATOM     11  CA  GLY A   3       5.200   4.850   0.000  1.00  0.00           C
+ATOM     12  C   GLY A   3       6.100   3.700   0.000  1.00  0.00           C
+ATOM     13  O   GLY A   3       7.000   3.700   0.700  1.00  0.00           O
+ENDMDL
+MODEL        2
+ATOM      1  N   GLY A   1       1.100   1.000   0.900  1.00  0.00           N
+ATOM      2  CA  GLY A   1       2.050   1.100   1.100  1.00  0.00           C
+ATOM      3  C   GLY A   1       2.550   2.300   1.100  1.00  0.00           C
+ATOM      4  O   GLY A   1       3.050   3.100   1.050  1.00  0.00           O
+ATOM      5  N   ALA A   2       1.650   2.900   1.100  1.00  0.00           N
+ATOM      6  CA  ALA A   2       2.000   4.300   1.100  1.00  0.00           C
+ATOM      7  CB  ALA A   2       1.200   5.350   1.050  1.00  0.00           C
+ATOM      8  C   ALA A   2       3.450   4.900   1.050  1.00  0.00           C
+ATOM      9  O   ALA A   2       4.150   5.800   1.600  1.00  0.00           O
+ATOM     10  N   GLY A   3       3.900   4.200   0.350  1.00  0.00           N
+ATOM     11  CA  GLY A   3       5.300   4.850   0.300  1.00  0.00           C
+ATOM     12  C   GLY A   3       6.200   3.650   0.250  1.00  0.00           C
+ATOM     13  O   GLY A   3       7.100   3.600   0.900  1.00  0.00           O
+ENDMDL
+END
+"""
+
+    # You can name this file however you want; using a random suffix is common.
+    pdb_filename = "SMALL_GAG_trajectory_987654.pdb"
+    with open(pdb_filename, "w") as f:
+        f.write(pdb_content)
+
+    # Yield the filename to the test function(s).
+    yield pdb_filename
+
+    # Cleanup after tests complete
+    request.addfinalizer(lambda: safe_remove(pdb_filename))
+
+
+@pytest.fixture(scope="module")
 def get_registry(
     raw_alanine_pdb_file,
     clean_alanine_pdb_file,
     butane_static_trajectory_with_hydrogens,
     butane_dynamic_trajectory_with_hydrogens,
     butane_trajectory_without_hydrogens,
+    small_peptide_gag_trajectory,
     request,
 ):
     created_paths = []  # Keep track of created directories for cleanup
@@ -374,7 +427,12 @@ def get_registry(
         return base_path, registry
 
     def create(
-        raw_or_clean, with_files, dynamic=False, include_hydrogens=False, map_path=True
+        raw_or_clean,
+        with_files,
+        dynamic=False,
+        include_hydrogens=False,
+        map_path=True,
+        include_peptide_trajectory=False,
     ):
         base_path, registry = get_new_ckpt()
         created_paths.append(base_path)
@@ -402,6 +460,10 @@ def get_registry(
                     traj_file, top_file = butane_static_trajectory_with_hydrogens
             else:
                 traj_file, top_file = butane_trajectory_without_hydrogens
+            if include_peptide_trajectory:
+                pep_traj_file = small_peptide_gag_trajectory
+                files["pep_traj_987654"] = {"name": pep_traj_file, "dir": record_path}
+
             files["rec0_butane_123456"] = {"name": traj_file, "dir": record_path}
             files["top_sim0_butane_123456"] = {"name": top_file, "dir": pdb_path}
             for f in files:
