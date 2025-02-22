@@ -21,8 +21,8 @@ class VisFunctions:
         return png_files
 
     def run_molrender(self, cif_path: str) -> str:
-        """Function to run molrender,
-        it requires node.js to be installed
+        """Function to run molrender.
+        It requires Node.js
         and the molrender package to be
         installed globally.
         This will save .png
@@ -43,8 +43,8 @@ class VisFunctions:
             f"mol_render_{self.cif_file_name}",
             f"{self.path_registry.ckpt_figures}/{file_name[0]}",
             (
-                f"Visualization of cif file {self.cif_file_name}"
-                "as png file. using molrender."
+                f"Visualization of CIF file {self.cif_file_name}"
+                "as a PNG file using molrender."
             ),
         )
 
@@ -62,8 +62,8 @@ class VisFunctions:
         tool, it will create
         a notebook
         with the code to
-        install nglview and
-        display the cif/pdb file."""
+        install NGLView and
+        display the CIF/PDB file."""
         self.cif_file_name = os.path.basename(cif_file)
 
         # Create a new notebook
@@ -97,21 +97,21 @@ view
         self.path_registry.map_path(
             notebook_name,
             notebook_name,
-            f"Notebook to visualize cif/pdb file {self.cif_file_name} using nglview.",
+            f"Notebook to visualize CIF/PDB file {self.cif_file_name} using NGLView.",
         )
         return "Visualization Complete"
 
 
 class VisualizeProtein(BaseTool):
-    """To get a png, you must install molrender
-    https://github.com/molstar/molrender/tree/master
+    """To get a PNG, you must install molrender
+    https://github.com/molstar/molrender/tree/master.
     Otherwise, you will get a notebook where you
     can visualize the protein."""
 
     name = "PDBVisualization"
     description = """This tool will create
-                    a visualization of a cif
-                    file as a png file OR
+                    a visualization of a CIF
+                    file as a PNG file OR
                     it will create
                     a .ipynb file with the
                     visualization of the
@@ -130,7 +130,7 @@ class VisualizeProtein(BaseTool):
     def _run(self, cif_file_name: str) -> str:
         """use the tool."""
         if not self.path_registry:
-            return "Failed. Error: Path registry is not set"
+            return "Failed. Error: Path registry is not set."
         cif_path = self.path_registry.get_mapped_path(cif_file_name)
         if not cif_path:
             return f"Failed. File not found: {cif_file_name}"
@@ -141,7 +141,7 @@ class VisualizeProtein(BaseTool):
             print(f"Error running molrender: {str(e)}. Using NGLView instead.")
             try:
                 vis.create_notebook(cif_path)
-                return "Succeeded. Visualization created as notebook"
+                return "Succeeded. Visualization created as notebook."
             except Exception as e:
                 return f"Failed. {type(e).__name__}: {e}"
 

@@ -1,3 +1,4 @@
+from .analysis_tools.bond_angles_dihedrals_tool import ComputeAngles
 from .analysis_tools.distance_tools import ContactsTool, DistanceMatrixTool
 from .analysis_tools.hydrogen_bonding_tools import HydrogenBondTool
 from .analysis_tools.inertia import MomentOfInertia
@@ -63,6 +64,18 @@ __all__ = [
     "GetSubunitStructure",
     "GetTurnsBetaSheetsHelices",
     "GetUniprotID",
+    "ComputeAngles",
+    "ComputeChi1",
+    "ComputeChi2",
+    "ComputeChi3",
+    "ComputeChi4",
+    "ComputeDihedrals",
+    "ComputeOmega",
+    "ComputePhi",
+    "ComputePsi",
+    "ListRegistryPaths",
+    "MapPath2Name",
+    "ModifyBaseSimulationScriptTool",
     "ComputeLPRMSD",
     "ComputeRMSD",
     "ComputeRMSF",
@@ -79,6 +92,7 @@ __all__ = [
     "PPIDistance",
     "ProteinName2PDBTool",
     "RadiusofGyrationTool",
+    "RamachandranPlot",
     "RDFTool",
     "RMSDCalculator",
     "Scholar2ResultLLM",

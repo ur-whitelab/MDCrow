@@ -13,6 +13,7 @@ from mdcrow.utils import PathRegistry
 from .base_tools import (
     CleaningToolFunction,
     ComputeAcylindricity,
+    ComputeAngles,
     ComputeAsphericity,
     ComputeDSSP,
     ComputeGyrationTensor,
@@ -89,6 +90,7 @@ def make_all_tools(
         ComputeDSSP(path_registry=path_instance),
         ComputeGyrationTensor(path_registry=path_instance),
         ComputeRelativeShapeAntisotropy(path_registry=path_instance),
+        ComputeAngles(path_registry=path_instance),
         CleaningToolFunction(path_registry=path_instance),
         ComputeLPRMSD(path_registry=path_instance),
         ComputeRMSD(path_registry=path_instance),

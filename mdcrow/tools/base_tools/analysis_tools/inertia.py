@@ -51,7 +51,7 @@ class MOIFunctions:
 
     def plot_moi(self):
         """
-        Analyze and visualize the principal moments of inertia.
+        Analyzes and visualizes the principal moments of inertia.
         """
         message = ""
         if self.moments_of_inertia is None:
@@ -60,7 +60,7 @@ class MOIFunctions:
         if self.traj.n_frames == 1:  # only one frame
             moi_string = ", ".join(f"{moi:.2f}" for moi in self.moments_of_inertia[0])
             message += (
-                "Only one frame in trajectory, no plot generated. \n"
+                "Only one frame in the trajectory, no plot generated. \n"
                 f"Principal Moments of Inertia: {moi_string}. \n"
             )
             return message

@@ -40,7 +40,7 @@ def test_plot_moi_one_frame(moi_functions):
     # Simulate a single frame of inertia tensor data
     moi_functions.moments_of_inertia = np.array([[1.0, 2.0, 3.0]])
     result = moi_functions.plot_moi()
-    assert "Only one frame in trajectory, no plot generated." in result
+    assert "Only one frame in the trajectory, no plot generated." in result
 
 
 @patch("mdcrow.tools.base_tools.analysis_tools.inertia.plt.savefig")
