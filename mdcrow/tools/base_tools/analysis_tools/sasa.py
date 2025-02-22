@@ -11,7 +11,7 @@ from mdcrow.utils import FileType, PathRegistry, load_single_traj, save_to_csv
 class SASAFunctions:
     def __init__(self, path_registry, top_fileid, traj_fileid=None, mol_name=None):
         """
-        Initialize the SASAFunctions class with topology and/or trajectory files.
+        Initializes the SASAFunctions class with topology and/or trajectory files.
 
         Parameters:
         path_registry (PathRegistry): mapping file IDs to file paths.
@@ -29,14 +29,14 @@ class SASAFunctions:
 
     def calculate_sasa(self, probe_radius=0.14):
         """
-        Calculate the Solvent Accessible Surface Area (SASA) for each
-        frame in the trajectory using Shrake-Rupley algorithm.
+        Calculates the Solvent Accessible Surface Area (SASA) for each
+        frame in the trajectory using the Shrake-Rupley algorithm.
 
         Parameters:
         probe_radius (float, optional): The radius of the probe used to calculate SASA.
-            Default is 0.14 nm (1.4 Å).
+            The default is 0.14 nm (1.4 Å).
         """
-        print("Calcuating SASA ...")
+        print("Calculating SASA ...")
         self.residue_sasa = md.shrake_rupley(
             self.traj, probe_radius=probe_radius, mode="residue"
         )
@@ -58,7 +58,7 @@ class SASAFunctions:
 
     def plot_sasa(self):
         """
-        Plot the total SASA and per-residue SASA over time.
+        Plots the total SASA and per-residue SASA over time.
         """
         message = ""
         if self.total_sasa is None or self.residue_sasa is None:
@@ -110,7 +110,7 @@ class SASAFunctions:
 class SolventAccessibleSurfaceArea(BaseTool):
     name = "SolventAccessibleSurfaceArea"
     description = (
-        "Compute the Solvent Accessible Surface Area (SASA) for a molecule or protein."
+        "Computes the Solvent Accessible Surface Area (SASA) for a molecule or protein."
         "\nInputs: \n"
         "\t(str) File ID for the topology file. \n"
         "\t(str, optional) File ID for the trajectory file. \n"

@@ -94,7 +94,7 @@ class RadiusofGyrationTool(BaseTool):
     name = "RadiusofGyrationTool"
     description = """This tool calculates and plots
     the radius of gyration
-    at each frame of a given trajectory and retuns the average.
+    at each frame of a given trajectory and returns the average.
     Give this tool BOTH the trajectory file ID and the
     topology file ID."""
 

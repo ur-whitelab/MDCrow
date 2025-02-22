@@ -6,13 +6,13 @@ from mdcrow.utils import FileType, PathRegistry, load_single_traj
 
 
 class HydrogenBondTool(BaseTool):
-    """Note that this tool only usees the Baker-Hubbard method for identifying hydrogen bonds.
+    """Note that this tool only uses the Baker-Hubbard method for identifying hydrogen bonds.
     Other methods (kabsch-sander, wernet-nilsson) can be implemented later, if desired.
     """
 
     name = "hydrogen_bond_tool"
     description = (
-        "Identifies hydrogen bonds and plots the results from the"
+        "Identifies hydrogen bonds and plots the results from the "
         "provided trajectory data."
         "Input the File ID for the trajectory file and optionally the topology file. "
         "The tool will output the file ID of the results and plot."

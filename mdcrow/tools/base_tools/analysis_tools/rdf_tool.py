@@ -10,7 +10,7 @@ from mdcrow.utils import FileType, PathRegistry
 
 class RDFToolInput(BaseModel):
     trajectory_fileid: str = Field(
-        None, description="Trajectory file. Either dcd, hdf5, xtc oe xyz"
+        None, description="Trajectory file. Either dcd, hdf5, xtc or xyz"
     )
 
     topology_fileid: Optional[str] = Field(None, description="Topology file")
@@ -166,17 +166,17 @@ class RDFTool(BaseTool):
                         raise ValueError(
                             "Incorrect Inputs: "
                             "Stride must be a positive integer "
-                            "or None for default value of 1"
+                            "or None for default value of 1."
                         )
                 except ValueError:
                     raise ValueError(
                         "Incorrect Inputs: Stride must be an integer "
-                        "or None for default value of 1"
+                        "or None for default value of 1."
                     )
             else:
                 if stride <= 0:
                     raise ValueError(
-                        "Incorrect Inputs: " "Stride must be a positive integer"
+                        "Incorrect Inputs: " "Stride must be a positive integer."
                     )
 
         if atom_indices:
@@ -185,7 +185,7 @@ class RDFTool(BaseTool):
             except ValueError:
                 raise ValueError(
                     "Incorrect Inputs: Atom indices must be a comma "
-                    "separated list of integers or None for all atoms"
+                    "separated list of integers or None for all atoms."
                 )
         inputs = {
             "trajectory_fileid": trajectory_id,

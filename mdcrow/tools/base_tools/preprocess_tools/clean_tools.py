@@ -11,9 +11,9 @@ from mdcrow.utils import FileType, PathRegistry
 class CleaningToolFunctionInput(BaseModel):
     """Input model for CleaningToolFunction"""
 
-    pdb_id: str = Field(..., description="ID of the pdb/cif file in the path registry")
+    pdb_id: str = Field(..., description="ID of the PDB/CIF file in the path registry.")
     replace_nonstandard_residues: bool = Field(
-        True, description="Whether to replace nonstandard residues with standard ones. "
+        True, description="Whether to replace nonstandard residues with standard ones."
     )
     add_missing_atoms: bool = Field(
         True,
@@ -36,8 +36,8 @@ class CleaningToolFunctionInput(BaseModel):
 class CleaningToolFunction(BaseTool):
     name = "CleaningToolFunction"
     description = """
-    This tool performs various cleaning operations on a PDB or CIF file.
-    Operations can include removing heterogens,
+    This tool performs various cleaning operations on a PDB or CIF file,
+    including removing heterogens,
     adding missing atoms and hydrogens,
     replacing nonstandard residues, and/or removing water.
 
@@ -62,7 +62,7 @@ class CleaningToolFunction(BaseTool):
             pdbfile_id = input_args.get("pdb_id", None)
             if pdbfile_id is None:
                 return """Failed. No file was provided.
-                The input has to be a dictionary with the key 'pdb_id'"""
+                The input must be a dictionary containing the key 'pdb_id'"""
             remove_heterogens = input_args.get("remove_heterogens", True)
             remove_water = input_args.get("remove_water", True)
             add_hydrogens = input_args.get("add_hydrogens", True)
@@ -105,32 +105,32 @@ class CleaningToolFunction(BaseTool):
                     fixer.removeHeterogens(True)
                     file_description += " Removed Heterogens, and Water Kept. "
             except Exception:
-                print("error at removeHeterogens")
+                print("Error at removeHeterogens")
 
             try:
                 if replace_nonstandard_residues:
                     fixer.replaceNonstandardResidues()
                     file_description += " Replaced Nonstandard Residues. "
             except Exception:
-                print("error at replaceNonstandardResidues")
+                print("Error at replaceNonstandardResidues")
             try:
                 fixer.findMissingAtoms()
             except Exception:
-                print("error at findMissingAtoms")
+                print("Error at findMissingAtoms")
             try:
                 if add_missing_atoms:
                     fixer.addMissingAtoms()
             except Exception:
-                print("error at addMissingAtoms")
+                print("Error at addMissingAtoms")
             try:
                 if add_hydrogens:
                     fixer.addMissingHydrogens(add_hydrogens_ph)
                     file_description += f"Added Hydrogens at pH {add_hydrogens_ph}. "
             except Exception:
-                print("error at addMissingHydrogens")
+                print("Error at addMissingHydrogens")
 
             file_description += (
-                "Missing Atoms Added and replaces nonstandard residues. "
+                "Missing Atoms added and nonstandard residues replaced. "
             )
             file_mode = "w" if add_hydrogens else "a"
             file_name = self.path_registry.write_file_name(
