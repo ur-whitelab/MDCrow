@@ -47,7 +47,7 @@ class MDCrow:
         uploaded_files=[],  # user input files to add to path registry
         run_id="",
         use_memory=False,
-        safe_mode=False,
+        modifysim_no_run=False,
         paper_dir=None,  # papers for pqa, relative path within repo
     ):
         self.llm = _make_llm(model, temp, streaming)
@@ -60,11 +60,7 @@ class MDCrow:
         self.ckpt_dir = self.path_registry.ckpt_dir
         self.memory = MemoryManager(self.path_registry, self.tools_llm, run_id=run_id)
         self.run_id = self.memory.run_id
-
         self.uploaded_files = uploaded_files
-        # for file in uploaded_files:  # todo -> allow users to add descriptions?
-        # self.path_registry.map_path(file, file, description="User uploaded file")
-
         self.agent = None
         self.agent_type = agent_type
         self.top_k_tools = top_k_tools
@@ -74,7 +70,7 @@ class MDCrow:
 
         if self.uploaded_files:
             self.add_file(self.uploaded_files)
-        self.safe_mode = safe_mode
+        self.modifysim_no_run = modifysim_no_run
 
     def _add_single_file(self, file_path, description=None):
         now = datetime.now()
@@ -127,7 +123,7 @@ class MDCrow:
                 self.tools = make_all_tools(
                     self.tools_llm,
                     human=self.use_human_tool,
-                    safe_mode=self.safe_mode,
+                    modifysim_no_run=self.modifysim_no_run,
                 )
         return AgentExecutor.from_agent_and_tools(
             tools=self.tools,

@@ -53,8 +53,6 @@ class ModifyScriptUtils:
 
         return llm_chain.invoke(task)
 
-        # Remove leading spaces for proper formatting
-
     def remove_leading_spaces(self, text):
         lines = text.split("\n")
         stripped_lines = [line.lstrip() for line in lines]
@@ -84,20 +82,15 @@ class ModifyBaseSimulationScriptTool(BaseTool):
     args_schema = ModifyScriptInput
     llm: Optional[BaseLanguageModel]
     path_registry: Optional[PathRegistry]
-    safe_mode: Optional[bool]
+    modifysim_no_run: Optional[bool]
 
-    def __init__(self, path_registry, llm, safe_mode=False):
+    def __init__(self, path_registry, llm, modifysim_no_run=False):
         super().__init__()
         self.path_registry = path_registry
         self.llm = llm
-        self.safe_mode = safe_mode
+        self.modifysim_no_run = modifysim_no_run
 
     def _run(self, script_id: str, query: str) -> str:
-        # if len(args) > 0:
-        #     return (
-        #         "Failed. This tool expects you to provide the input as a "
-        #         "dictionary: {'query': 'your query', 'script': 'script id'}"
-        #     )
         if not self.path_registry:
             return "Failed. No path registry provided"  # this should not happen
         base_script_id = script_id
@@ -133,9 +126,7 @@ class ModifyBaseSimulationScriptTool(BaseTool):
             task={"base_script": base_script, "query": description}
         )
         print("This the answer from the LLM\n\n", answer)
-        # script = answer["text"]
         thoughts, new_script = answer.split("SCRIPT:")
-        # script_content = utils.remove_leading_spaces(new_script)
         script_content = new_script
         if "FINAL THOUGHTS:" in script_content:
             script_content, final_thoughts = script_content.split("FINAL THOUGHTS:")
@@ -152,10 +143,10 @@ class ModifyBaseSimulationScriptTool(BaseTool):
             file.write(script_content)
 
         self.path_registry.map_path(file_id, f"{directory}/{filename}", description)
-        # if safe mode is on, return the file id
-        if self.safe_mode:
+        # if no-run mode is on, return the file id
+        if self.modifysim_no_run:
             return f"Succeeded. Script modified successfully. Modified Script ID: {file_id}"
-        # if safe mode is off, try to run the script
+        # if no-run mode is off, try to run the script
         try:
             exec(script_content)
             return f"Succeeded. Script modified and ran \

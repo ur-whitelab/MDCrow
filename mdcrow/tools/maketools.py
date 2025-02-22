@@ -63,7 +63,7 @@ from .base_tools import (
 def make_all_tools(
     llm: BaseLanguageModel,
     human=False,
-    safe_mode=False,
+    modifysim_no_run=False,
 ):
     load_dotenv()
     all_tools = []
@@ -73,7 +73,7 @@ def make_all_tools(
         # all_tools += [PythonREPLTool()]
         all_tools += [
             ModifyBaseSimulationScriptTool(
-                path_registry=path_instance, llm=llm, safe_mode=safe_mode
+                path_registry=path_instance, llm=llm, modifysim_no_run=modifysim_no_run
             ),
         ]
         if path_instance.ckpt_papers:
