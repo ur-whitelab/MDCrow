@@ -21,7 +21,7 @@ pip install git+https://github.com/ur-whitelab/MDCrow.git
 
 ## Usage
 The next step is to set up your API keys in your environment. An API key for an LLM provider is necessary for this project. Supported LLM providers are OpenAI, TogetherAI, Fireworks, and Anthropic.
-Other tools require API keys, such as paper-qa for literature searches. We recommend setting up the keys in a .env file. You can use the provided .env.example file as a template.
+We recommend setting up the API keys in a .env file. You can use the provided .env.example file as a template.
 1. Copy the `.env.example` file and rename it to `.env`: `cp .env.example .env`
 2. Replace the placeholder values in `.env` with your actual keys
 
@@ -42,7 +42,5 @@ By default, we support LLMs through OpenAI API. However, feel free to use other 
 
 
 ## Contributing
-
-We welcome contributions to MDCrow! If you're interested in contributing to the project, please check out our [Contributor's Guide](CONTRIBUTING.md) for detailed instructions on getting started, feature development, and the pull request process.
 
 We value and appreciate all contributions to MDCrow.
