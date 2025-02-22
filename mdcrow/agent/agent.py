@@ -93,11 +93,11 @@ class MDCrow:
         self.path_registry.map_path(ID, file_path, description=description)
 
     def add_file(self, uploaded_files):
-        if type(uploaded_files) == str:
+        if isinstance(uploaded_files, str):
             self._add_single_file(uploaded_files)
-        elif type(uploaded_files) == tuple:
+        elif isinstance(uploaded_files, tuple):
             self._add_single_file(uploaded_files[0], description=uploaded_files[1])
-        elif type(uploaded_files) == list:
+        elif isinstance(uploaded_files, list):
             for file_path in uploaded_files:
                 print(f"Adding file {file_path}\n")
                 print(type(file_path))
