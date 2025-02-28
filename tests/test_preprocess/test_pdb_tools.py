@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mdagent.tools.base_tools import get_pdb
-from mdagent.tools.base_tools.preprocess_tools.packing import PackMolTool
-from mdagent.tools.base_tools.preprocess_tools.pdb_get import MolPDB
+from mdcrow.tools.base_tools import get_pdb
+from mdcrow.tools.base_tools.preprocess_tools.packing import PackMolTool
+from mdcrow.tools.base_tools.preprocess_tools.pdb_get import MolPDB
 
 
 @pytest.fixture
@@ -93,7 +93,7 @@ def test_packmol_sm_download_called(packmol):
         "1A3N_144150", f"{packmol.path_registry.ckpt_pdb}/1A3N_144150.pdb", "pdb"
     )
     with patch(
-        "mdagent.tools.base_tools.preprocess_tools.packing.PackMolTool._get_sm_pdbs",
+        "mdcrow.tools.base_tools.preprocess_tools.packing.PackMolTool._get_sm_pdbs",
         new=MagicMock(),
     ) as mock_get_sm_pdbs:
         test_values = {

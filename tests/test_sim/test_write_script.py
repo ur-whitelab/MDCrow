@@ -2,7 +2,7 @@ import pytest
 from openmm import unit
 from openmm.app import PME, NoCutoff
 
-from mdagent.tools.base_tools.simulation_tools.setup_and_run import OpenMMSimulation
+from mdcrow.tools.base_tools.simulation_tools.setup_and_run import OpenMMSimulation
 
 
 @pytest.fixture
@@ -219,7 +219,7 @@ def script_content_2(script_content_vars_2, openmm_sim):
     )
 
 
-def est_construct_script_content_script2(script_content_2, script_content_vars_2):
+def test_construct_script_content_script2(script_content_2, script_content_vars_2):
     assert (
         f"ewaldErrorTolerance = {script_content_vars_2.ewald_error_tolerance}"
         in script_content_2

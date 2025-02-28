@@ -2,7 +2,7 @@ import pytest
 from openmm import unit
 from openmm.app import PME, HBonds
 
-from mdagent.tools.base_tools.simulation_tools import SetUpandRunFunction
+from mdcrow.tools.base_tools.simulation_tools import SetUpandRunFunction
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ def test_parse_cutoff(setupandrun, input_cutoff, expected_result):
 def test_parse_cutoff_unknown_unit(setupandrun):
     with pytest.raises(ValueError) as e:
         setupandrun._parse_cutoff("2pc")
-        assert "Unknown unit" in str(e.value)
+    assert "Unknown unit" in str(e.value)
 
 
 def test_parse_temperature(setupandrun):

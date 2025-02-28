@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.sasa import (
+from mdcrow.tools.base_tools.analysis_tools.sasa import (
     SASAFunctions,
     SolventAccessibleSurfaceArea,
 )
@@ -55,7 +55,7 @@ def test_sasa_tool_init(get_registry):
 
 
 @patch("os.path.exists", return_value=False)
-@patch("mdagent.tools.base_tools.analysis_tools.sasa.np.savetxt")
+@patch("mdcrow.tools.base_tools.analysis_tools.sasa.np.savetxt")
 def test_calculate_sasa(mock_savetxt, mock_exists, get_sasa_functions_with_files):
     analysis = get_sasa_functions_with_files
     result = analysis.calculate_sasa()
@@ -65,8 +65,8 @@ def test_calculate_sasa(mock_savetxt, mock_exists, get_sasa_functions_with_files
     assert analysis.total_sasa is not None
 
 
-@patch("mdagent.tools.base_tools.analysis_tools.sasa.plt.savefig")
-@patch("mdagent.tools.base_tools.analysis_tools.sasa.plt.close")
+@patch("mdcrow.tools.base_tools.analysis_tools.sasa.plt.savefig")
+@patch("mdcrow.tools.base_tools.analysis_tools.sasa.plt.close")
 def test_plot_sasa(mock_close, mock_savefig, get_sasa_functions_with_files):
     analysis = get_sasa_functions_with_files
     analysis.residue_sasa = np.array([[1, 2], [3, 4]])

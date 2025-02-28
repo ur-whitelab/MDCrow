@@ -1,7 +1,7 @@
 import mdtraj as md
 import pytest
 
-from mdagent.tools.base_tools.analysis_tools.salt_bridge_tool import SaltBridgeFunction
+from mdcrow.tools.base_tools.analysis_tools.salt_bridge_tool import SaltBridgeFunction
 
 # pdb with salt bridge residues (ARG, ASP, LYS, GLU)
 pdb_data = """
