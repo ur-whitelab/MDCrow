@@ -1,5 +1,3 @@
-import warnings
-
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
@@ -12,10 +10,12 @@ from mdagent.utils import FileType, PathRegistry, load_single_traj, save_plot
 class SaltBridgeFunction:
     def __init__(self, path_registry):
         self.path_registry = path_registry
-        self.salt_bridge_pairs = []  # stores paired salt bridges
+        self.salt_bridge_data = []  # stores paired salt bridges
         self.salt_bridge_counts = []
         self.traj = None
         self.traj_file = ""
+        self.specific_frame = None
+        self.pH = 7.0
 
     def _load_traj(self, traj_file, top_file):
         self.traj = load_single_traj(
@@ -26,86 +26,118 @@ class SaltBridgeFunction:
     def find_salt_bridges(
         self,
         threshold_distance: float = 0.4,
-        residue_pairs=[],
+        pH_dependence=False,
+        target_pH=7.0,
+        specific_frame=None,
+        acidic_residues=("ASP", "GLU"),
+        basic_residues=("ARG", "LYS", "HIS"),
+        include_terminals=True,
     ):
         """
-        Find Salt Bridge in molecular dynamics simulation trajectory, using
-        threshold distance (in nm) between N and O atoms for salt bridge formation,
-        based on Barlow and Thornton's original definition of salt bridges
-        (https://doi.org/10.1016/S0022-2836(83)80079-5)
+        Analyze salt bridges in a molecular structure or trajectory.
 
+        Parameters:
+        - threshold_distance (float): Distance cutoff (Å) to define a salt bridge.
+        - pH_dependence (bool): Whether to consider pH-based protonation states.
+        - target_pH (float): The pH level to consider when adjusting protonation states.
+        - specific_frame (int, optional): To compute salt bridge details for that frame.
+        - acidic_residues (tuple): List of acidic residues (default: ASP, GLU).
+        - basic_residues (tuple): List of basic residues (default: ARG, LYS, HIS).
+        - include_terminals (bool): Whether to include N-/C-termini in salt bridges.
 
-        threshold_distance: maximum distance (in nm) between N and O atoms
-        residue_pairs (optional): list of tuples (donor_residue, acceptor_residue)
+        Returns:
+        - If trajectory: Plots salt bridge counts over time.
+        - If single frame or specific frame: Saves detailed salt bridge list.
         """
         if self.traj is None:
             raise Exception("MDTrajectory hasn't been loaded")
+        self.pH = target_pH
+        self.specific_frame = specific_frame
 
-        if not residue_pairs:
-            residue_pairs = [
-                # (postive-charged, negative-charged)
-                # pairs from https://doi.org/10.1002/prot.22927
-                ("ARG", "ASP"),
-                ("ARG", "GLU"),
-                ("LYS", "ASP"),
-                ("LYS", "GLU"),
-                ("HIS", "ASP"),
-                ("HIS", "GLU"),
-            ]
-            warnings.warn(
-                "No residue pairs provided. Default charged residues "
-                "are being used, assuming physiological pH. "
-                f"Default pairs: {residue_pairs}",
-                UserWarning,
-            )
+        acidic_selection = (
+            f"(resname {' '.join(acidic_residues)}) and name OE1 OE2 OD1 OD2"
+        )
+        basic_selection = f"(resname {' '.join(basic_residues)}) and name NZ NH1 NH2 NE"
 
-        donor_acceptor_pairs = []
-        for pair in residue_pairs:
-            print(f"Looking for salt bridges between {pair[0]} and {pair[1]} pairs...")
-            donor_atoms = self.traj.topology.select(f'resname == "{pair[0]}"')
-            acceptor_atoms = self.traj.topology.select(f'resname == "{pair[1]}"')
+        if include_terminals:
+            acidic_selection += " or name OXT"  # C-terminal oxygen
+            basic_selection += " or (resid 1 and name N)"  # N-terminal amine
 
-            if donor_atoms.size == 0 or acceptor_atoms.size == 0:
-                continue
+        acidic_atoms = self.traj.topology.select(acidic_selection)
+        basic_atoms = self.traj.topology.select(basic_selection)
 
-            donor_nitrogens = [  # N atoms in the donor residues (e.g. Arg, Lys, His)
-                atom.index
-                for atom in self.traj.topology.atoms
-                if atom.index in donor_atoms and atom.element.symbol == "N"
-            ]
-            acceptor_oxygens = [  # O atoms in the acceptor residues (e.g. Asp, Glu)
-                atom.index
-                for atom in self.traj.topology.atoms
-                if atom.index in acceptor_atoms and atom.element.symbol == "O"
+        if pH_dependence:
+            # pKa values from https://dx.doi.org/10.1146/annurev-biophys-083012-130351
+            # future improvements: get pKa with PROPKA?
+            pKa_values = {
+                "ASP": 4.0,
+                "GLU": 4.4,
+                "HIS": 6.8,
+                "LYS": 10.4,
+                "ARG": 13.5,
+                "CYS": 8.3,
+                "TYR": 9.6,
+                "N-Terminus": 8.0,
+                "C-Terminus": 3.6,
+            }
+            acidic_atoms = [
+                a
+                for a in acidic_atoms
+                if (pKa := pKa_values.get(self.traj.topology.atom(a).residue.name))
+                is not None
+                and target_pH > pKa
             ]
 
-            # generate all possible donor-acceptor pairs
-            pairs = np.array(np.meshgrid(donor_nitrogens, acceptor_oxygens)).T.reshape(
-                -1, 2
-            )
-            donor_acceptor_pairs.append(pairs)
+            basic_atoms = [
+                a
+                for a in basic_atoms
+                if (pKa := pKa_values.get(self.traj.topology.atom(a).residue.name))
+                is not None
+                and target_pH < pKa
+            ]
 
-        if not donor_acceptor_pairs:
+        acidic_atoms = np.array(acidic_atoms)
+        basic_atoms = np.array(basic_atoms)
+
+        if acidic_atoms.size == 0 or basic_atoms.size == 0:
             return None
 
-        donor_acceptor_pairs = np.vstack(donor_acceptor_pairs)  # combine into one list
-        all_distances = md.compute_distances(self.traj, donor_acceptor_pairs)
+        # Compute distances
+        pairs = np.array(np.meshgrid(acidic_atoms, basic_atoms)).T.reshape(-1, 2)
+        all_distances = md.compute_distances(self.traj, pairs)
 
         salt_bridge_counts = []
-        salt_bridge_pairs = []
+        salt_bridge_data = []
         for frame_idx in range(self.traj.n_frames):
-            frame_distances = all_distances[frame_idx]
-            within_threshold = frame_distances <= threshold_distance
-            salt_bridge_counts.append(np.sum(within_threshold))
+            within_cutoff = all_distances[frame_idx] < threshold_distance
+            count = np.sum(within_cutoff)
+            salt_bridge_counts.append(count)
 
-            filtered_pairs = donor_acceptor_pairs[within_threshold]
-            if filtered_pairs.size > 0:
-                salt_bridge_pairs.append((frame_idx, filtered_pairs))
+            valid_indices = np.where(within_cutoff)[0]
+            filtered_pairs = pairs[valid_indices]
+            for pair_idx, (acid_idx, base_idx) in zip(valid_indices, filtered_pairs):
+                acid_atom = self.traj.topology.atom(acid_idx)
+                base_atom = self.traj.topology.atom(base_idx)
+                distance_value = all_distances[frame_idx, pair_idx]
+                salt_bridge_data.append(
+                    {
+                        "Frame": frame_idx,
+                        "Residue1": f"{acid_atom.residue.name}{acid_atom.residue.index}",
+                        "Atom1": acid_atom.name,
+                        "Residue2": f"{base_atom.residue.name}{base_atom.residue.index}",
+                        "Atom2": base_atom.name,
+                        "Distance (Å)": f"{distance_value:.4f}",
+                    }
+                )
         self.salt_bridge_counts = salt_bridge_counts
-        self.salt_bridge_pairs = salt_bridge_pairs
+        self.salt_bridge_data = salt_bridge_data
 
     def plot_salt_bridge_counts(self):
-        if not self.salt_bridge_pairs or self.traj.n_frames == 1:
+        if not self.salt_bridge_data or self.traj.n_frames == 1 or self.specific_frame:
+            print("i'm here")
+            print(not self.salt_bridge_data)
+            print(not self.traj.n_frames)
+            print(not self.specific_frame)
             return None
 
         plt.figure(figsize=(10, 6))
@@ -123,7 +155,7 @@ class SaltBridgeFunction:
         fig_id = save_plot(
             self.path_registry,
             "salt_bridge",
-            f"figure of salt bridge counts for {self.traj_file}",
+            f"figure of salt bridge counts for {self.traj_file} with pH {self.pH}",
         )
         plt.close()
         return fig_id
@@ -131,39 +163,25 @@ class SaltBridgeFunction:
     def save_results_to_file(self):
         if self.traj is None:
             raise Exception("Trajectory is None")
-        if not self.salt_bridge_pairs:
+        if not self.salt_bridge_data:
             return None
 
-        if self.traj.n_frames == 1:
-            num_sb = self.salt_bridge_counts[0]
-            print(f"We found {num_sb} salt bridges for {self.traj_file}.")
+        frame_to_save = 0 if self.traj.n_frames == 1 else self.specific_frame
+        if frame_to_save is not None and 0 <= frame_to_save < self.traj.n_frames:
+            num_sb = self.salt_bridge_counts[frame_to_save]
             print(
-                (
-                    "Since the trajectory has only one frame, we saved a "
-                    "list of salt bridges instead of plotting."
-                )
+                f"We found {num_sb} salt bridges for {self.traj_file} in frame {frame_to_save}."
             )
-
-            salt_bridge_data = []
-            frame_idx, bridges = self.salt_bridge_pairs[0]
-            for bridge in bridges:
-                donor_residue = self.traj.topology.atom(bridge[0]).residue
-                acceptor_residue = self.traj.topology.atom(bridge[1]).residue
-                salt_bridge_data.append(
-                    {
-                        "Donor": f"{donor_residue.name} ({donor_residue.index + 1})",
-                        "Acceptor": f"{acceptor_residue.name} ({acceptor_residue.index + 1})",
-                    }
-                )
-            df = pd.DataFrame(salt_bridge_data)
-
+            filtered_salt_bridge_data = [
+                entry
+                for entry in self.salt_bridge_data
+                if entry["Frame"] == frame_to_save
+            ]
+            if not filtered_salt_bridge_data:
+                return
+            df = pd.DataFrame(filtered_salt_bridge_data)
         else:
-            df = pd.DataFrame(
-                {
-                    "Frame": range(self.traj.n_frames),
-                    "Salt Bridge Count": self.salt_bridge_counts,
-                }
-            )
+            df = pd.DataFrame(self.salt_bridge_data)
 
         # save to file, add to path registry
         file_name = self.path_registry.write_file_name(
@@ -174,9 +192,8 @@ class SaltBridgeFunction:
         file_id = self.path_registry.get_fileid(file_name, FileType.RECORD)
         file_path = f"{self.path_registry.ckpt_records}/{file_name}"
         df.to_csv(file_path, index=False)
-        self.path_registry.map_path(
-            file_id, file_path, description=f"salt bridge analysis for {self.traj_file}"
-        )
+        desc = f"salt bridge analysis for {self.traj_file} in frame {frame_to_save}"
+        self.path_registry.map_path(file_id, file_path, description=desc)
         return file_id
 
     def compute_salt_bridges(
@@ -184,10 +201,23 @@ class SaltBridgeFunction:
         traj_file,
         top_file,
         threshold_distance,
-        residue_pairs,
+        pH_dependence,
+        target_pH,
+        specific_frame,
+        acidic_residues,
+        basic_residues,
+        include_terminals,
     ):
         self._load_traj(traj_file, top_file)
-        self.find_salt_bridges(threshold_distance, residue_pairs)
+        self.find_salt_bridges(
+            threshold_distance,
+            pH_dependence,
+            target_pH,
+            specific_frame,
+            acidic_residues,
+            basic_residues,
+            include_terminals,
+        )
         file_id = self.save_results_to_file()
         fig_id = self.plot_salt_bridge_counts()
         return file_id, fig_id
@@ -198,8 +228,11 @@ class SaltBridgeTool(BaseTool):
     description = (
         "A tool to find and count salt bridges in a protein trajectory. "
         "You need to provide either PDB file or trajectory and topology files. "
-        "Optional: provide threshold distance (default:0.4) and a custom list "
-        "of residue pairs as tuples of positive-charged and negative-charged. "
+        "The rest of inputs are optional: threshold_distance (default: 0.4), "
+        "pH_dependence (whether to consider pH-based protonation states), "
+        "target_pH (default: 7.0), specific_frame, acidic_residues "
+        "(default: ('ASP', 'GLU')), basic_residues (default: ('ARG', 'LYS', 'HIS')), "
+        "and include_terminals (default: True)."
     )
     path_registry: PathRegistry | None = None
 
@@ -212,7 +245,12 @@ class SaltBridgeTool(BaseTool):
         traj_file: str,
         top_file: str | None = None,
         threshold_distance=0.4,
-        residue_pairs=[],
+        pH_dependence=False,
+        target_pH=7.0,
+        specific_frame=None,
+        acidic_residues=("ASP", "GLU"),
+        basic_residues=("ARG", "LYS", "HIS"),
+        include_terminals=True,
     ):
         try:
             if self.path_registry is None:
@@ -220,7 +258,15 @@ class SaltBridgeTool(BaseTool):
 
             salt_bridge_function = SaltBridgeFunction(self.path_registry)
             results_file_id, fig_id = salt_bridge_function.compute_salt_bridges(
-                traj_file, top_file, threshold_distance, residue_pairs
+                traj_file,
+                top_file,
+                threshold_distance,
+                pH_dependence,
+                target_pH,
+                specific_frame,
+                acidic_residues,
+                basic_residues,
+                include_terminals,
             )
             if not results_file_id:
                 return (

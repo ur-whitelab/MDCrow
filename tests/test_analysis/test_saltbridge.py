@@ -9,17 +9,22 @@ HEADER    MOCK SALT BRIDGE EXAMPLE
 ATOM      1  N   ARG A   1       0.000   0.000   0.000
 ATOM      2  CA  ARG A   1       1.000   0.000   0.000
 ATOM      3  C   ARG A   1       1.500   1.000   0.000
-ATOM      4  O   ASP A   2       2.000   1.000   0.000
-ATOM      5  N   LYS A   3       0.000   1.000   1.000
-ATOM      6  CA  LYS A   3       1.000   1.000   1.000
-ATOM      7  C   LYS A   3       1.500   2.000   1.000
-ATOM      8  O   GLU A   4       2.000   2.000   1.000
-ATOM      9  N   ASP A   2       3.000   1.000   0.000
-ATOM     10  O   GLU A   4       4.000   2.000   1.000
-ATOM     11  N   GLU A   4       2.000   2.000   0.000
-ATOM     12  O   GLU A   4       4.000   2.000   1.000
-ATOM     13  N   LYS A   3       0.0     3.0      0.000
-ATOM     14  O   LYS A   3       0.0     4.0      0.000
+ATOM      4  NH1 ARG A   1       2.000   1.500   0.000
+ATOM      5  NH2 ARG A   1       2.000   1.800   0.000
+ATOM      6  N   LYS A   3       0.000   1.000   1.000
+ATOM      7  CA  LYS A   3       1.000   1.000   1.000
+ATOM      8  C   LYS A   3       1.500   2.000   1.000
+ATOM      9  NZ  LYS A   3       2.000   2.500   1.000
+ATOM     10  N   ASP A   2       3.000   1.000   0.000
+ATOM     11  CA  ASP A   2       3.500   1.500   0.000
+ATOM     12  C   ASP A   2       4.000   2.000   0.000
+ATOM     13  OD1 ASP A   2       4.500   2.500   0.000
+ATOM     14  OD2 ASP A   2       4.200   2.800   0.000
+ATOM     15  N   GLU A   4       2.000   2.000   0.000
+ATOM     16  CA  GLU A   4       2.500   2.500   0.000
+ATOM     17  C   GLU A   4       3.000   3.000   0.000
+ATOM     18  OE1 GLU A   4       3.500   3.500   0.000
+ATOM     19  OE2 GLU A   4       3.800   3.800   0.000
 END
 """
 
@@ -34,7 +39,6 @@ def get_salt_bridge_function(get_registry):
     fxn = SaltBridgeFunction(reg)
     fxn.traj = md.load(pdb_path)
     fxn.traj_file = "sb_residues"
-    # fxn._load_traj(pdb_path, pdb_path)  # Using pdb_path as both traj and top file for simplicity
     return fxn
 
 
@@ -52,9 +56,8 @@ def test_find_salt_bridges_with_salt_bridges(get_salt_bridge_function):
     salt_bridge_function = get_salt_bridge_function
     salt_bridge_function.find_salt_bridges()
     assert len(salt_bridge_function.salt_bridge_counts) == 1
-    assert len(salt_bridge_function.salt_bridge_pairs) == 1  # Only 1 frame
-    assert len(salt_bridge_function.salt_bridge_pairs[0][1]) == 6
-    assert salt_bridge_function.salt_bridge_counts == [6]
+    assert len(salt_bridge_function.salt_bridge_data) == 12
+    assert salt_bridge_function.salt_bridge_counts == [12]
 
 
 def test_salt_bridge_files_single_frame(get_salt_bridge_function):
@@ -86,8 +89,8 @@ def test_no_salt_bridges(get_salt_bridge_function_with_butane):
     assert file_id is None
     assert fig_id is None
     assert len(salt_bridge_function.salt_bridge_counts) == 0
-    assert len(salt_bridge_function.salt_bridge_pairs) == 0
-    assert salt_bridge_function.salt_bridge_pairs == []
+    assert len(salt_bridge_function.salt_bridge_data) == 0
+    assert salt_bridge_function.salt_bridge_data == []
     assert file_id is None
     assert fig_id is None
 
