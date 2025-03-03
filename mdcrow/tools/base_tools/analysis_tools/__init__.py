@@ -23,7 +23,6 @@ __all__ = [
     "PCATool",
     "PPIDistance",
     "RadiusofGyrationTool",
-    "RMSDCalculator",
     "SaltBridgeTool",
     "SimulationOutputFigures",
     "SolventAccessibleSurfaceArea",
