@@ -95,6 +95,7 @@ __all__ = [
     "RadiusofGyrationTool",
     "RamachandranPlot",
     "RDFTool",
+    "RMSDCalculator",
     "SaltBridgeTool",
     "Scholar2ResultLLM",
     "SetUpandRunFunction",
