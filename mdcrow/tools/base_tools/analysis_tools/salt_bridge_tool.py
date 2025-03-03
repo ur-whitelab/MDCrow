@@ -134,10 +134,6 @@ class SaltBridgeFunction:
 
     def plot_salt_bridge_counts(self):
         if not self.salt_bridge_data or self.traj.n_frames == 1 or self.specific_frame:
-            print("i'm here")
-            print(not self.salt_bridge_data)
-            print(not self.traj.n_frames)
-            print(not self.specific_frame)
             return None
 
         plt.figure(figsize=(10, 6))
@@ -170,7 +166,8 @@ class SaltBridgeFunction:
         if frame_to_save is not None and 0 <= frame_to_save < self.traj.n_frames:
             num_sb = self.salt_bridge_counts[frame_to_save]
             print(
-                f"We found {num_sb} salt bridges for {self.traj_file} in frame {frame_to_save}."
+                f"We found {num_sb} salt bridges for {self.traj_file} ",
+                f"in frame {frame_to_save}.",
             )
             filtered_salt_bridge_data = [
                 entry
