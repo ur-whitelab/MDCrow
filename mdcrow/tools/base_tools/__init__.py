@@ -8,6 +8,7 @@ from .analysis_tools.ppi_tools import PPIDistance
 from .analysis_tools.rdf_tool import RDFTool
 from .analysis_tools.rgy import RadiusofGyrationTool
 from .analysis_tools.rmsd_tools import ComputeLPRMSD, ComputeRMSD, ComputeRMSF
+from .analysis_tools.salt_bridge_tool import SaltBridgeTool
 from .analysis_tools.sasa import SolventAccessibleSurfaceArea
 from .analysis_tools.secondary_structure import (
     ComputeAcylindricity,
@@ -95,6 +96,7 @@ __all__ = [
     "RamachandranPlot",
     "RDFTool",
     "RMSDCalculator",
+    "SaltBridgeTool",
     "Scholar2ResultLLM",
     "SetUpandRunFunction",
     "SimulationOutputFigures",
