@@ -6,7 +6,14 @@ import json
 import os
 from typing import Any, Literal
 
-from analysis_tools import compute_bond_angles, compute_rdf, compute_rmsd, compute_rmsf
+from analysis_tools import (
+    compute_bond_angles,
+    compute_contacts,
+    compute_distance,
+    compute_rdf,
+    compute_rmsd,
+    compute_rmsf,
+)
 from aviary.core import (
     Environment,
     Message,
@@ -120,6 +127,8 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_rmsf),
             Tool.from_function(compute_rdf),
             Tool.from_function(compute_bond_angles),
+            Tool.from_function(compute_contacts),
+            Tool.from_function(compute_distance),
             # submit answer
             Tool.from_function(self.submit_answer),
         ]
@@ -144,6 +153,8 @@ class MDCrowEnv(Environment[None]):
                             f" {compute_rmsf.__name__}) or"
                             f" {compute_rdf.__name__}) or"
                             f" {compute_bond_angles.__name__}) or"
+                            f" {compute_contacts.__name__}) or"
+                            f" {compute_distance.__name__}) or"
                             # submit answer
                             f" {self.submit_answer.__name__})."
                         )
