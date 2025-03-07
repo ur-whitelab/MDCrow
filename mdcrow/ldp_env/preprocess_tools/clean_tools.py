@@ -1,5 +1,3 @@
-from typing import Dict, Optional
-
 from openmm.app import PDBFile, PDBxFile
 from pdbfixer import PDBFixer
 
