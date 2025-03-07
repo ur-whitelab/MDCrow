@@ -10,6 +10,7 @@ from analysis_tools import (
     compute_bond_angles,
     compute_contacts,
     compute_distance,
+    compute_hbonds,
     compute_rdf,
     compute_rmsd,
     compute_rmsf,
@@ -129,6 +130,7 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_bond_angles),
             Tool.from_function(compute_contacts),
             Tool.from_function(compute_distance),
+            Tool.from_function(compute_hbonds),
             # submit answer
             Tool.from_function(self.submit_answer),
         ]
@@ -155,6 +157,7 @@ class MDCrowEnv(Environment[None]):
                             f" {compute_bond_angles.__name__}) or"
                             f" {compute_contacts.__name__}) or"
                             f" {compute_distance.__name__}) or"
+                            f" {compute_hbonds.__name__}) or"
                             # submit answer
                             f" {self.submit_answer.__name__})."
                         )

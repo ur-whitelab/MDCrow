@@ -1,5 +1,3 @@
-from typing import Self
-
 from aviary.core import Message, Tool
 from pydantic import BaseModel, ConfigDict, Field
 from utils import PathRegistry
@@ -34,7 +32,7 @@ class MDCrowState(BaseModel):
     def get_next_state(
         self,
         obs: list[Message] | None = None,
-    ) -> self:
+    ):
         """
         Return the next agent state based on current state and optional messages.
 
