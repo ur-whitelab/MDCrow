@@ -1,8 +1,6 @@
-import os
-import shutil
-
 import json
 import os
+import shutil
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -63,8 +61,6 @@ class SetCheckpoint:
         if keep_root:
             _ = self.make_ckpt_parent_folder(parent_ckpt_path)
         return None
-
-
 
 
 ##TODO: add method to get description from simulation inputs
@@ -365,7 +361,7 @@ class PathRegistry:
         fig_analysis = kwargs.get("fig_analysis", None)
         file_name = ""
         if type == FileType.PROTEIN:
-            #writing the file name for the protein file
+            # writing the file name for the protein file
             print("writing file name")
             file_name += f"{protein_name}_{description}_{time_stamp}.{file_format}"
         if type == FileType.SIMULATION:
