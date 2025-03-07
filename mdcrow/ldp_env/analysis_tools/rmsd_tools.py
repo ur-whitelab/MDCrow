@@ -1,12 +1,11 @@
-from typing import Optional, Type
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import mdtraj as md
-# from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-
 from state import MDCrowState
-from utils import PathRegistry, load_traj_with_ref, save_plot, save_to_csv
+from utils import load_traj_with_ref, save_plot, save_to_csv
+
+# from langchain.tools import BaseTool
 
 
 def _rmsd(path_registry, traj, ref_traj, mol_name, select="protein"):
@@ -69,12 +68,12 @@ def _rmsd(path_registry, traj, ref_traj, mol_name, select="protein"):
 
 async def compute_rmsd(
     state: MDCrowState,
-    top_id: str = None,
+    top_id: str,
     traj_id: Optional[str] = None,
     ref_top_id: Optional[str] = None,
     ref_traj_id: Optional[str] = None,
     select: Optional[str] = "protein",
-    mol_name: Optional[str] = None
+    mol_name: Optional[str] = None,
 ):
     """
     Compute root mean square deviation (RMSD) of all conformations in target to a\
@@ -93,7 +92,7 @@ async def compute_rmsd(
         mol_name (Optional[str], optional): Name of the molecule or protein.
 
     Returns:
-  
+
     """
     try:
         if mol_name is None:
@@ -105,8 +104,8 @@ async def compute_rmsd(
         return f"Succeeded. {msg}", 0, False
     except Exception as e:
         return f"Failed. {type(e).__name__}: {e}", 0, False
-    
-   
+
+
 def _rmsf(path_registry, traj, ref_traj, mol_name, select="protein"):
     """
     Calculate the root mean square fluctuation (RMSF) of each selected atom.
@@ -169,14 +168,15 @@ def _rmsf(path_registry, traj, ref_traj, mol_name, select="protein"):
     )
     return msg
 
+
 async def compute_rmsf(
     state: MDCrowState,
-    top_id: str = None,
+    top_id: str,
     traj_id: Optional[str] = None,
     ref_top_id: Optional[str] = None,
     ref_traj_id: Optional[str] = None,
     select: Optional[str] = "protein",
-    mol_name: Optional[str] = None
+    mol_name: Optional[str] = None,
 ):
     """
     Compute root mean square fluctuation (RMSF) of all conformations in target to a\
@@ -195,7 +195,7 @@ async def compute_rmsf(
         mol_name (Optional[str], optional): Name of the molecule or protein.
 
     Returns:
-  
+
     """
     try:
         if mol_name is None:
@@ -207,7 +207,7 @@ async def compute_rmsf(
         return f"Succeeded. {msg}", 0, False
     except Exception as e:
         return f"Failed. {type(e).__name__}: {e}", 0, False
-    
+
 
 def lprmsd(path_registry, traj, ref_traj, mol_name, select="protein"):
     """
@@ -246,6 +246,7 @@ def lprmsd(path_registry, traj, ref_traj, mol_name, select="protein"):
         header="LP-RMSD (nm)",
     )
     return f"LP-RMSD calculated and saved to csv with file ID {csv_file_id}"
+
 
 # class ComputeRMSD(BaseTool):
 #     name: str = "ComputeRMSD"

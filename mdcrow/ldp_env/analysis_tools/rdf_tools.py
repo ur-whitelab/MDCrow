@@ -142,8 +142,18 @@ async def compute_rdf(
     topology_id = inputs["topology_fileid"]
     # stride = inputs["stride"]  # ignore
     stride = int(inputs["stride"]) if isinstance(inputs["stride"], (str, int)) else None
-
-    atom_indices = inputs["atom_indices"]
+    ## Pre-commit was mad at this assignment so had to make sure is actually a list(int)
+    ## or None [JM].
+    if isinstance(inputs["atom_indices"], int):
+        atom_indices = [inputs["atom_indices"]]  # Convert single int to list
+    elif isinstance(inputs["atom_indices"], str):
+        atom_indices = [
+            int(x) for x in inputs["atom_indices"].split(",")
+        ]  # Convert comma-separated string to list
+    elif isinstance(inputs["atom_indices"], list):
+        atom_indices = inputs["atom_indices"]
+    else:
+        atom_indices = None  # Keep None if not provided
 
     path_to_traj = state.path_registry.get_mapped_path(trajectory_id)
     ending = path_to_traj.split(".")[-1]

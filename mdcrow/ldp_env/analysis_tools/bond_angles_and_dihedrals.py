@@ -3,11 +3,8 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
-from pydantic import BaseModel, Field
-
 from state import MDCrowState
-from utils import FileType, PathRegistry, load_single_traj
-
+from utils import FileType, load_single_traj
 
 
 def validate_input(path_registry, **input):
@@ -71,6 +68,7 @@ def validate_input(path_registry, **input):
         "system_message": system_message,
     }
 
+
 def get_values(input):
     traj_id = input.get("trajectory_fileid")
     top_id = input.get("topology_fileid")
@@ -82,7 +80,7 @@ def get_values(input):
     return traj_id, top_id, analysis, sel, error, syst_mes
 
 
-def compute_and_plot_phi_psi(traj, path_registry, sim_id ):
+def compute_and_plot_phi_psi(traj, path_registry, sim_id):
     """
     Computes phi-psi angles, saves results to file, and produces Ramachandran plot.
     """
@@ -134,6 +132,7 @@ def compute_and_plot_phi_psi(traj, path_registry, sim_id ):
             "Succeeded. Computed phi-psi angles (no path_registry to save).",
         )
 
+
 def classify_chi(ang_deg, res_name=""):
     """Return an integer code depending on angle range."""
     # Example classification with made-up intervals:
@@ -152,11 +151,13 @@ def classify_chi(ang_deg, res_name=""):
     elif -120 <= ang_deg < 0:
         return 2  # e.g. "g-"
 
-# function that takes an array and classifies the angles
-def classify_chi_angles( angles, res_name=""):
-    return [classify_chi(ang, res_name) for ang in angles] #shape = (#frames,1)
 
-def _plot_one_chi_angle( ax, angle_array, residue_names, title=None):
+# function that takes an array and classifies the angles
+def classify_chi_angles(angles, res_name=""):
+    return [classify_chi(ang, res_name) for ang in angles]  # shape = (#frames,1)
+
+
+def _plot_one_chi_angle(ax, angle_array, residue_names, title=None):
     """
     Classify angles per residue/frame, then do imshow on a given Axes.
     angle_array: shape (n_frames, n_residues) or (n_residues, n_frames)
@@ -167,7 +168,7 @@ def _plot_one_chi_angle( ax, angle_array, residue_names, title=None):
             [classify_chi_angles(a, str(name)[:3])]
             for i, (a, name) in enumerate(zip(angle_array.T, residue_names))
         ]
-    ) #shape = (#res,1, #frames)
+    )  # shape = (#res,1, #frames)
     states_per_res = state_sequence.reshape(
         state_sequence.shape[0], state_sequence.shape[2]
     )  # shape = (#res,1, #frames)
@@ -204,67 +205,70 @@ def _plot_one_chi_angle( ax, angle_array, residue_names, title=None):
     ###################################################
     # Main function to produce a single figure w/ 4 subplots
     ###################################################
+
+
 def compute_plot_all_chi_angles(traj, path_registry, sim_id="sim"):
-        """
-        Create one figure with 4 subplots (2x2):
-        - subplot(0,0): χ1
-        - subplot(0,1): χ2
-        - subplot(1,0): χ3
-        - subplot(1,1): χ4
-        """
-        chi1_indices, chi_1_angles = md.compute_chi1(traj)
-        chi2_indices, chi_2_angles = md.compute_chi2(traj)
-        chi3_indices, chi_3_angles = md.compute_chi3(traj)
-        chi4_indices, chi_4_angles = md.compute_chi4(traj)
-        chi_1_angles_degrees = np.rad2deg(chi_1_angles)
-        chi_2_angles_degrees = np.rad2deg(chi_2_angles)
-        chi_3_angles_degrees = np.rad2deg(chi_3_angles)
-        chi_4_angles_degrees = np.rad2deg(chi_4_angles)
-        residue_names_1 = [traj.topology.atom(i).residue for i in chi1_indices[:, 1]]
-        residue_names_2 = [traj.topology.atom(i).residue for i in chi2_indices[:, 1]]
-        residue_names_3 = [traj.topology.atom(i).residue for i in chi3_indices[:, 1]]
-        residue_names_4 = [traj.topology.atom(i).residue for i in chi4_indices[:, 1]]
-        fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    """
+    Create one figure with 4 subplots (2x2):
+    - subplot(0,0): χ1
+    - subplot(0,1): χ2
+    - subplot(1,0): χ3
+    - subplot(1,1): χ4
+    """
+    chi1_indices, chi_1_angles = md.compute_chi1(traj)
+    chi2_indices, chi_2_angles = md.compute_chi2(traj)
+    chi3_indices, chi_3_angles = md.compute_chi3(traj)
+    chi4_indices, chi_4_angles = md.compute_chi4(traj)
+    chi_1_angles_degrees = np.rad2deg(chi_1_angles)
+    chi_2_angles_degrees = np.rad2deg(chi_2_angles)
+    chi_3_angles_degrees = np.rad2deg(chi_3_angles)
+    chi_4_angles_degrees = np.rad2deg(chi_4_angles)
+    residue_names_1 = [traj.topology.atom(i).residue for i in chi1_indices[:, 1]]
+    residue_names_2 = [traj.topology.atom(i).residue for i in chi2_indices[:, 1]]
+    residue_names_3 = [traj.topology.atom(i).residue for i in chi3_indices[:, 1]]
+    residue_names_4 = [traj.topology.atom(i).residue for i in chi4_indices[:, 1]]
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 
-        # Top-left: χ1
-        _plot_one_chi_angle(
-            axes[0, 0], chi_1_angles_degrees, residue_names_1, title=r"$\chi$1"
-        )
+    # Top-left: χ1
+    _plot_one_chi_angle(
+        axes[0, 0], chi_1_angles_degrees, residue_names_1, title=r"$\chi$1"
+    )
 
-        # Top-right: χ2
-        _plot_one_chi_angle(
-            axes[0, 1], chi_2_angles_degrees, residue_names_2, title="$\chi$2"
-        )
+    # Top-right: χ2
+    _plot_one_chi_angle(
+        axes[0, 1], chi_2_angles_degrees, residue_names_2, title="$\chi$2"
+    )
 
-        # Bottom-left: χ3
-        _plot_one_chi_angle(
-            axes[1, 0], chi_3_angles_degrees, residue_names_3, title="$\chi$3"
-        )
+    # Bottom-left: χ3
+    _plot_one_chi_angle(
+        axes[1, 0], chi_3_angles_degrees, residue_names_3, title="$\chi$3"
+    )
 
-        # Bottom-right: χ4
-        _plot_one_chi_angle(
-            axes[1, 1], chi_4_angles_degrees, residue_names_4, title="$\chi$4"
-        )
-        # add title
-        fig.suptitle(f"Chi angles per residue for simulation {sim_id}", fontsize=16)
-        plt.tight_layout()
-        # plt.show()
-        # Save the figure
-        file_name = path_registry.write_file_name(
-            FileType.FIGURE,
-            fig_analysis="chi_angles",
-            file_format="png",
-            Sim_id=sim_id,
-        )
-        desc = f"Chi angles plot for the simulation {sim_id}"
-        plot_id = path_registry.get_fileid(file_name, FileType.FIGURE)
-        path = path_registry.ckpt_dir + "/figures/"
-        plt.savefig(path + file_name)
-        path_registry.map_path(plot_id, path + file_name, description=desc)
-        plt.clf()  # Clear the current figure so it does not overlay next plot
-        return plot_id, "Succeeded. Chi angles plot saved."
+    # Bottom-right: χ4
+    _plot_one_chi_angle(
+        axes[1, 1], chi_4_angles_degrees, residue_names_4, title="$\chi$4"
+    )
+    # add title
+    fig.suptitle(f"Chi angles per residue for simulation {sim_id}", fontsize=16)
+    plt.tight_layout()
+    # plt.show()
+    # Save the figure
+    file_name = path_registry.write_file_name(
+        FileType.FIGURE,
+        fig_analysis="chi_angles",
+        file_format="png",
+        Sim_id=sim_id,
+    )
+    desc = f"Chi angles plot for the simulation {sim_id}"
+    plot_id = path_registry.get_fileid(file_name, FileType.FIGURE)
+    path = path_registry.ckpt_dir + "/figures/"
+    plt.savefig(path + file_name)
+    path_registry.map_path(plot_id, path + file_name, description=desc)
+    plt.clf()  # Clear the current figure so it does not overlay next plot
+    return plot_id, "Succeeded. Chi angles plot saved."
 
-def analyze_trajectory(traj, analysis,path_registry=None, sim_id="sim"):
+
+def analyze_trajectory(traj, analysis, path_registry=None, sim_id="sim"):
     """
     Main function to decide which analysis to do:
     'phi-psi', 'chis', or 'all'.
@@ -279,10 +283,8 @@ def analyze_trajectory(traj, analysis,path_registry=None, sim_id="sim"):
     # ================ CHI1-CHI2 ONLY ================
     elif analysis == "chis":
         chi_plot_id, chi_message = compute_plot_all_chi_angles(
-            traj,
-            path_registry,
-            sim_id
-            )
+            traj, path_registry, sim_id
+        )
         return f"Chis plot with ID {chi_plot_id}, message: {chi_message}"
 
     # ================ ALL =================
@@ -294,10 +296,8 @@ def analyze_trajectory(traj, analysis,path_registry=None, sim_id="sim"):
 
         # Then do chi1-chi2
         chi_plot_id, chi_message = compute_plot_all_chi_angles(
-            traj,
-            path_registry,
-            sim_id
-            )
+            traj, path_registry, sim_id
+        )
         if "Failed." in chi_message:
             return chi_message
 
@@ -317,24 +317,24 @@ async def compute_bond_angles(
     trajectory_fileid: str,
     topology_fileid: str,
     analysis: str = "all",
-    selection: Optional[str] = "all"
+    selection: Optional[str] = "all",
 ):
     """
     Analyze dihedral angles from a trajectory file. The tool allows for
-    analysis of the phi-psi angles, chis angles, or both. 
+    analysis of the phi-psi angles, chis angles, or both.
 
     Args:
         trajectory_fileid (str): File ID of the trajectory file to be analyzed.
         topology_fileid (str): File ID of the topology file associated with the \
             trajectory.
-        analysis (str, optional): Specifies the type of angular analysis to perform. 
+        analysis (str, optional): Specifies the type of angular analysis to perform.
             Available options:
             - "phi-psi": Generates a Ramachandran plot and histograms for Phi-Psi \
                 angles.
-            - "chis": Computes Chi 1-4 angles and saves a time evolution plot for all 
+            - "chis": Computes Chi 1-4 angles and saves a time evolution plot for all
               residues. Sidechains with enough carbons are considered for plotting.
             - "all": Performs both of the above analyses. Defaults to "all".
-        selection (Optional[str], optional): Defines which atoms to select for analysis 
+        selection (Optional[str], optional): Defines which atoms to select for analysis
             using MDTraj selection syntax. Examples:
             - "resid 1 to 10"
             - "name CA"
@@ -382,9 +382,13 @@ async def compute_bond_angles(
             in str(e)
         ):
             return (
-                "Failed. Error loading trajectory. Make sure the topology file"
-                " is from the initial positions of the trajectory. Error: {str(e)}"
-            ), 0 , False
+                (
+                    "Failed. Error loading trajectory. Make sure the topology file"
+                    " is from the initial positions of the trajectory. Error: {str(e)}"
+                ),
+                0,
+                False,
+            )
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except OSError as e:
         if (
@@ -393,26 +397,34 @@ async def compute_bond_angles(
             in str(e)
         ):
             return (
-                "Failed. Error loading trajectory. Make sure you include the"
-                "correct file for the topology. Supported extensions are:"
-                "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
-                "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
-            ), 0 , False
-        return f"Failed. Error loading trajectory: {str(e)}" , 0, False
+                (
+                    "Failed. Error loading trajectory. Make sure you include the"
+                    "correct file for the topology. Supported extensions are:"
+                    "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
+                    "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
+                ),
+                0,
+                False,
+            )
+        return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except Exception as e:
-        return f"Failed. Error loading trajectory: {str(e)}" , 0, False
+        return f"Failed. Error loading trajectory: {str(e)}", 0, False
     # make selection
     if selection:
         try:
             traj = traj.atom_slice(traj.top.select(selection))
-            #print how many residues are in this traj
+            # print how many residues are in this traj
         except Exception as e:
             # return f"Failed. Error selecting atoms: {str(e)}"
             print(f"Error selecting atoms: {str(e)}, defaulting to all atoms")
 
     return (
-        analyze_trajectory(traj, analysis,state.path_registry, sim_id=traj_id,), 
-        0, 
-        False
-        )
-
+        analyze_trajectory(
+            traj,
+            analysis,
+            state.path_registry,
+            sim_id=traj_id,
+        ),
+        0,
+        False,
+    )
