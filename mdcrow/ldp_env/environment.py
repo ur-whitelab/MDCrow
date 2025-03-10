@@ -13,6 +13,7 @@ from analysis_tools import (
     compute_hbonds,
     compute_moment_of_inertia,
     compute_ppi_distance,
+    compute_radius_of_gyration,
     compute_rdf,
     compute_rmsd,
     compute_rmsf,
@@ -137,6 +138,7 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_hbonds),
             Tool.from_function(compute_moment_of_inertia),
             Tool.from_function(compute_ppi_distance),
+            Tool.from_function(compute_radius_of_gyration),
             Tool.from_function(perform_pca_analysis),
             Tool.from_function(get_simulation_figure),
             # submit answer
@@ -169,6 +171,7 @@ class MDCrowEnv(Environment[None]):
                             f" {compute_moment_of_inertia.__name__} or"
                             f" {compute_ppi_distance.__name__} or"
                             f" {get_simulation_figure.__name__} or"
+                            f" {compute_radius_of_gyration.__name__} or"
                             f" {perform_pca_analysis.__name__} or"
                             # submit answer
                             f" {self.submit_answer.__name__})."
