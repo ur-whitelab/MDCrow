@@ -19,8 +19,10 @@ from analysis_tools import (
     compute_rmsf,
     compute_salt_bridges,
     compute_solvent_accessible_surface_area,
+    computeDSSP,
     get_simulation_figure,
     perform_pca_analysis,
+    summarize_protein_structure,
 )
 from aviary.core import (
     Environment,
@@ -137,6 +139,7 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_bond_angles),
             Tool.from_function(compute_contacts),
             Tool.from_function(compute_distance),
+            Tool.from_function(computeDSSP),
             Tool.from_function(compute_hbonds),
             Tool.from_function(compute_moment_of_inertia),
             Tool.from_function(compute_ppi_distance),
@@ -145,6 +148,7 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_solvent_accessible_surface_area),
             Tool.from_function(perform_pca_analysis),
             Tool.from_function(get_simulation_figure),
+            Tool.from_function(summarize_protein_structure),
             # submit answer
             Tool.from_function(self.submit_answer),
         ]
@@ -179,6 +183,8 @@ class MDCrowEnv(Environment[None]):
                             f" {get_simulation_figure.__name__} or"
                             f" {compute_radius_of_gyration.__name__} or"
                             f" {perform_pca_analysis.__name__} or"
+                            f" {summarize_protein_structure.__name__} or"
+                            f" {computeDSSP.__name__} or"
                             # submit answer
                             f" {self.submit_answer.__name__})."
                         )

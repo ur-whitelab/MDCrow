@@ -10,6 +10,7 @@ from .rgy import compute_radius_of_gyration
 from .rmsd_tools import compute_rmsd, compute_rmsf
 from .salt_bridge_tool import compute_salt_bridges
 from .sasa import compute_solvent_accessible_surface_area
+from .secondary_structures import computeDSSP, summarize_protein_structure
 
 __all__ = [
     "compute_rmsd",
@@ -21,6 +22,8 @@ __all__ = [
     "compute_hbonds",
     "compute_moment_of_inertia",
     "compute_ppi_distance",
+    "summarize_protein_structure",
+    "computeDSSP",
     "compute_radius_of_gyration",
     "compute_salt_bridges",
     "compute_solvent_accessible_surface_area",
