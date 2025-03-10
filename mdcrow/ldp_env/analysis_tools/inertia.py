@@ -107,9 +107,9 @@ async def compute_moment_of_inertia(
             "Compute the moment of inertia tensors for a molecule or protein."
     Args:
         state: MDCrowState object.
-        top_fileid: File ID for the topology file.
-        traj_fileid: File ID for the trajectory file.
-        molecule_name: Molecule or protein name.
+        top_fileid (str): File ID for the topology file.
+        traj_fileid (Optional[int], optional): File ID for the trajectory file.
+        molecule_name (Optional[int], optional): Molecule or protein name.
     """
     try:
         moi_funcs = MOIFunctions(
