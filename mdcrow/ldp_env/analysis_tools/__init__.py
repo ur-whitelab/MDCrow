@@ -4,6 +4,7 @@ from .hydrogen_bonding_tools import compute_hbonds
 from .inertia import compute_moment_of_inertia
 from .pca_tools import perform_pca_analysis
 from .plot_tools import get_simulation_figure
+from .ppi_tools import compute_ppi_distance
 from .rdf_tools import compute_rdf
 from .rmsd_tools import compute_rmsd, compute_rmsf
 
@@ -16,6 +17,7 @@ __all__ = [
     "compute_contacts",
     "compute_hbonds",
     "compute_moment_of_inertia",
+    "compute_ppi_distance",
     "get_simulation_figure",
     "perform_pca_analysis",
 ]
