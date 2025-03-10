@@ -365,7 +365,7 @@ def perform_pca_analysis(
     ) = get_values(input)
 
     if error:
-        return f"Failed. Error with the tool inputs: {error} "
+        return f"Failed. Error with the tool inputs: {error} ", 0, False
     if system_input_message == "Tool Messages:":
         system_input_message = ""
 
@@ -385,8 +385,8 @@ def perform_pca_analysis(
             return (
                 "Failed. Error loading trajectory. Make sure the topology file"
                 " is from the initial positions of the trajectory. Error: {str(e)}"
-            )
-        return f"Failed. Error loading trajectory: {str(e)}"
+            ), 0, False
+        return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except OSError as e:
         if (
             "The topology is loaded by filename extension, \
@@ -398,10 +398,10 @@ def perform_pca_analysis(
                 "correct file for the topology. Supported extensions are:"
                 "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
                 "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
-            )
-        return f"Failed. Error loading trajectory: {str(e)}"
+            ), 0, False
+        return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except Exception as e:
-        return f"Failed. Error loading trajectory: {str(e)}"
+        return f"Failed. Error loading trajectory: {str(e)}", 0 , False
     return (
         run_pca_analysis(
             path_registry,
