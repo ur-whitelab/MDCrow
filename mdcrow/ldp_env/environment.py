@@ -15,6 +15,7 @@ from analysis_tools import (
     compute_rdf,
     compute_rmsd,
     compute_rmsf,
+    get_simulation_figure,
     perform_pca_analysis,
 )
 from aviary.core import (
@@ -135,6 +136,7 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_hbonds),
             Tool.from_function(compute_moment_of_inertia),
             Tool.from_function(perform_pca_analysis),
+            Tool.from_function(get_simulation_figure),
             # submit answer
             Tool.from_function(self.submit_answer),
         ]
@@ -163,6 +165,7 @@ class MDCrowEnv(Environment[None]):
                             f" {compute_distance.__name__}) or"
                             f" {compute_hbonds.__name__}) or"
                             f" {compute_moment_of_inertia.__name__} or"
+                            f" {get_simulation_figure.__name__} or"
                             f" {perform_pca_analysis.__name__} or"
                             # submit answer
                             f" {self.submit_answer.__name__})."
