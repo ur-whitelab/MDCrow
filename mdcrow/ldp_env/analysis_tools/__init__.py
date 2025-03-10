@@ -8,6 +8,7 @@ from .ppi_tools import compute_ppi_distance
 from .rdf_tools import compute_rdf
 from .rgy import compute_radius_of_gyration
 from .rmsd_tools import compute_rmsd, compute_rmsf
+from .salt_bridge_tool import compute_salt_bridges
 
 __all__ = [
     "compute_rmsd",
@@ -20,6 +21,7 @@ __all__ = [
     "compute_moment_of_inertia",
     "compute_ppi_distance",
     "compute_radius_of_gyration",
+    "compute_salt_bridges",
     "get_simulation_figure",
     "perform_pca_analysis",
 ]

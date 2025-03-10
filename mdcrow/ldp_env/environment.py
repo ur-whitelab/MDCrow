@@ -17,6 +17,7 @@ from analysis_tools import (
     compute_rdf,
     compute_rmsd,
     compute_rmsf,
+    compute_salt_bridges,
     get_simulation_figure,
     perform_pca_analysis,
 )
@@ -139,6 +140,7 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(compute_moment_of_inertia),
             Tool.from_function(compute_ppi_distance),
             Tool.from_function(compute_radius_of_gyration),
+            Tool.from_function(compute_salt_bridges),
             Tool.from_function(perform_pca_analysis),
             Tool.from_function(get_simulation_figure),
             # submit answer
@@ -170,6 +172,7 @@ class MDCrowEnv(Environment[None]):
                             f" {compute_hbonds.__name__}) or"
                             f" {compute_moment_of_inertia.__name__} or"
                             f" {compute_ppi_distance.__name__} or"
+                            f" {compute_salt_bridges.__name__} or"
                             f" {get_simulation_figure.__name__} or"
                             f" {compute_radius_of_gyration.__name__} or"
                             f" {perform_pca_analysis.__name__} or"
