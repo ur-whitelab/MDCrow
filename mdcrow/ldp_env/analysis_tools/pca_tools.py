@@ -383,9 +383,13 @@ def perform_pca_analysis(
             in str(e)
         ):
             return (
-                "Failed. Error loading trajectory. Make sure the topology file"
-                " is from the initial positions of the trajectory. Error: {str(e)}"
-            ), 0, False
+                (
+                    "Failed. Error loading trajectory. Make sure the topology file"
+                    " is from the initial positions of the trajectory. Error: {str(e)}"
+                ),
+                0,
+                False,
+            )
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except OSError as e:
         if (
@@ -394,14 +398,18 @@ def perform_pca_analysis(
             in str(e)
         ):
             return (
-                "Failed. Error loading trajectory. Make sure you include the"
-                "correct file for the topology. Supported extensions are:"
-                "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
-                "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
-            ), 0, False
+                (
+                    "Failed. Error loading trajectory. Make sure you include the"
+                    "correct file for the topology. Supported extensions are:"
+                    "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
+                    "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
+                ),
+                0,
+                False,
+            )
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except Exception as e:
-        return f"Failed. Error loading trajectory: {str(e)}", 0 , False
+        return f"Failed. Error loading trajectory: {str(e)}", 0, False
     return (
         run_pca_analysis(
             path_registry,
