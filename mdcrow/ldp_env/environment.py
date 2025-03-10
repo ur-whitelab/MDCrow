@@ -32,7 +32,7 @@ from aviary.core import (
     ToolRequestMessage,
     ToolResponseMessage,
 )
-from preprocess_tools import clean_pdb_file, download_pdb_file
+from preprocess_tools import clean_pdb_file, download_pdb_file, get_small_molecule_PDB
 from pydantic import BaseModel, ConfigDict, Field
 from simulation_tools import setup_and_run_simulation
 from state import MDCrowState
@@ -130,6 +130,7 @@ class MDCrowEnv(Environment[None]):
             # preprocess tools
             Tool.from_function(download_pdb_file),
             Tool.from_function(clean_pdb_file),
+            Tool.from_function(get_small_molecule_PDB),
             # simulation tools
             Tool.from_function(setup_and_run_simulation),
             # analysis tools
@@ -166,16 +167,17 @@ class MDCrowEnv(Environment[None]):
                             # preprocess tools
                             f" ({download_pdb_file.__name__} or"
                             f" {clean_pdb_file.__name__} or"
+                            f" {get_small_molecule_PDB.__name__} or"
                             # simulation tools
-                            f" {setup_and_run_simulation.__name__})."
+                            f" {setup_and_run_simulation.__name__}."
                             # analysis tools
-                            f" {compute_rmsd.__name__}) or"
-                            f" {compute_rmsf.__name__}) or"
-                            f" {compute_rdf.__name__}) or"
-                            f" {compute_bond_angles.__name__}) or"
-                            f" {compute_contacts.__name__}) or"
-                            f" {compute_distance.__name__}) or"
-                            f" {compute_hbonds.__name__}) or"
+                            f" {compute_rmsd.__name__} or"
+                            f" {compute_rmsf.__name__} or"
+                            f" {compute_rdf.__name__} or"
+                            f" {compute_bond_angles.__name__} or"
+                            f" {compute_contacts.__name__} or"
+                            f" {compute_distance.__name__} or"
+                            f" {compute_hbonds.__name__} or"
                             f" {compute_moment_of_inertia.__name__} or"
                             f" {compute_ppi_distance.__name__} or"
                             f" {compute_salt_bridges.__name__} or"
