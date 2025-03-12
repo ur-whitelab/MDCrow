@@ -32,9 +32,14 @@ from aviary.core import (
     ToolRequestMessage,
     ToolResponseMessage,
 )
-from preprocess_tools import clean_pdb_file, download_pdb_file, get_small_molecule_PDB
+from preprocess_tools import (
+    clean_pdb_file,
+    download_pdb_file,
+    get_small_molecule_PDB,
+    pack_molecules,
+)
 from pydantic import BaseModel, ConfigDict, Field
-from simulation_tools import setup_and_run_simulation
+from simulation_tools import modify_simulation_script, setup_and_run_simulation
 from state import MDCrowState
 
 from ldp.agent import Agent
@@ -131,8 +136,10 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(download_pdb_file),
             Tool.from_function(clean_pdb_file),
             Tool.from_function(get_small_molecule_PDB),
+            Tool.from_function(pack_molecules),
             # simulation tools
             Tool.from_function(setup_and_run_simulation),
+            Tool.from_function(modify_simulation_script),
             # analysis tools
             Tool.from_function(compute_rmsd),
             Tool.from_function(compute_rmsf),
@@ -168,8 +175,10 @@ class MDCrowEnv(Environment[None]):
                             f" ({download_pdb_file.__name__} or"
                             f" {clean_pdb_file.__name__} or"
                             f" {get_small_molecule_PDB.__name__} or"
+                            f" {pack_molecules.__name__} or"
                             # simulation tools
-                            f" {setup_and_run_simulation.__name__}."
+                            f" {setup_and_run_simulation.__name__}"
+                            f" {modify_simulation_script.__name__} or"
                             # analysis tools
                             f" {compute_rmsd.__name__} or"
                             f" {compute_rmsf.__name__} or"
