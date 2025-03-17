@@ -124,7 +124,9 @@ def compute_and_plot_phi_psi(traj, path_registry, sim_id):
             path = path_registry.ckpt_dir + "/figures/"
             plt.savefig(path + file_name)
             path_registry.map_path(plot_id, path + file_name, description=desc)
+            plt.close()
             plt.clf()  # Clear the current figure so it does not overlay next plot
+
             print("Ramachandran plot saved to file")
             return plot_id, "Succeeded. Ramachandran plot saved."
         except Exception as e:

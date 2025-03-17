@@ -141,6 +141,8 @@ class PCA_analysis:
         plot_id = self.path_registry.get_fileid(file_name, FileType.FIGURE)
         path = self.path_registry.ckpt_dir + "/figures/"
         plt.savefig(path + file_name)
+        plt.close()  # close the plot
+        plt.clf()
         self.path_registry.map_path(plot_id, path + file_name, description=desc)
         return f"Scree Plot saved as {plot_id} ID\n" + extra_mess
 
@@ -159,6 +161,8 @@ class PCA_analysis:
         plot_id = self.path_registry.get_fileid(file_name, FileType.FIGURE)
         path = self.path_registry.ckpt_dir + "/figures/"
         plt.savefig(path + file_name)
+        plt.close()  # close the plot
+        plt.clf()
         self.path_registry.map_path(plot_id, path + file_name, description=desc)
         return f"PCA plots saved as {plot_id} "
 
