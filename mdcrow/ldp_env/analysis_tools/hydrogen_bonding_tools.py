@@ -109,7 +109,8 @@ def compute_hbonds(
         return (
             f"Hydrogen bond analysis completed. {data_id}, {plot_id} {rtrn_msg}.",
             0,
+            False,
         )
-        True
+
     except Exception as e:
         return f"Error during hydrogen bond analysis: {e}", 0, False

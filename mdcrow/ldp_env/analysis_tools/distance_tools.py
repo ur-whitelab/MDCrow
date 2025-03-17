@@ -1,8 +1,10 @@
 import itertools
 import os
 from typing import Literal, Optional
+
 import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
@@ -342,8 +344,9 @@ async def compute_distance(
                     "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
                     "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
                 ),
-            0,
-            False)
+                0,
+                False,
+            )
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except Exception as e:
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
@@ -440,8 +443,8 @@ async def compute_contacts(
 ):
     """
     Description:
-        Tool for computing the distance between pairs of residues in a trajectory. 
-        If distance is under the cutoff is considered a contact. The output is a 
+        Tool for computing the distance between pairs of residues in a trajectory.
+        If distance is under the cutoff is considered a contact. The output is a
         matrix plot where each contact between residues is represented by a dot.
 
     Args:
@@ -454,7 +457,7 @@ async def compute_contacts(
                 - "resid 0 1 2 3 4 5 6 7 8 9 10" (explicitly selects listed residues).
         cutoff (float, optional): Hard cutoff distance (in nanometers) for defining a contact.
             - Defaults to 0.8 nm.
-"""
+    """
     input = {
         "trajectory_fileid": trajectory_fileid,
         "topology_fileid": topology_fileid,
@@ -462,7 +465,7 @@ async def compute_contacts(
         "cutoff": cutoff,
     }
     try:
-        input = validate_contact_inputs(state.path_registry,**input)
+        input = validate_contact_inputs(state.path_registry, **input)
     except ValueError as e:
         return f"Failed. Error using the Contacts Tool: {str(e)}"
     (
