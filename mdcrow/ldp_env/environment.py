@@ -32,6 +32,9 @@ from aviary.core import (
     ToolRequestMessage,
     ToolResponseMessage,
 )
+
+# get secrets from environment variables
+from dotenv import load_dotenv
 from preprocess_tools import (
     clean_pdb_file,
     download_pdb_file,
@@ -45,7 +48,11 @@ from state import MDCrowState
 from ldp.agent import Agent
 from ldp.graph import LLMCallOp, OpResult, compute_graph
 
-os.environ["OPENAI_API_KEY"] = ""
+load_dotenv()
+
+# CHECK IF THE API KEY IS SET
+if "OPENAI_API_KEY" not in os.environ:
+    raise ValueError("OPENAI_API_KEY not set")
 
 
 class MySimpleAgent(BaseModel, Agent[MDCrowState]):
@@ -301,7 +308,7 @@ class MDCrowEnv(Environment[None]):
 
 
 env = MDCrowEnv.from_task(
-    "Download 1PGA structure from PDB clean, simulate and compute angle distances."
+    "Download 1PGA structure from PDB clean, simulate and compute contact and distance matrix."
 )
 agent = MySimpleAgent()
 

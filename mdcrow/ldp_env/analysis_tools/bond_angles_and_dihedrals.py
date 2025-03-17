@@ -1,5 +1,6 @@
 from typing import Optional
-
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np

@@ -1,7 +1,8 @@
 import itertools
 import os
 from typing import Literal, Optional
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
@@ -161,7 +162,7 @@ class DistanceToolsUtils:
         return description
 
 
-def validate_distance_inputs(path_registry, input):
+def validate_distance_inputs(path_registry, **input):
     input = input.get("action_input", input)
     input = input.get("input", input)
     trajectory_id = input.get("trajectory_fileid", None)
@@ -223,7 +224,7 @@ def validate_distance_inputs(path_registry, input):
     }
 
 
-def get_distance_values(input):
+def get_distance_values(**input):
     traj_id = input.get("trajectory_fileid")
     top_id = input.get("topology_fileid")
     sel1 = input.get("selection1")
@@ -236,7 +237,7 @@ def get_distance_values(input):
     return traj_id, top_id, sel1, sel2, analysis, mode, error, syst_mes
 
 
-def compute_distance(
+async def compute_distance(
     state: MDCrowState,
     trajectory_fileid: str,
     topology_fileid: str,
@@ -246,36 +247,37 @@ def compute_distance(
     selection2: Optional[str] = None,
 ):
     """
-    Tool for calculating distances between residue pairs in each frame of a \
-    trajectory. If only one pair is provided, the tool will calculate the distance \
-    between said pair in each frame and output a distance vs time plot and a \
-    histogram. If multiple pairs are provided, the tool will calculate the \
-    distance between each pair in each frame and output a distance matrix plot \
-    for the selected pairs. \
+    Description:
+        Tool for calculating distances between residue pairs in each frame of a \
+        trajectory. If only one pair is provided, the tool will calculate the distance \
+        between said pair in each frame and output a distance vs time plot and a \
+        histogram. If multiple pairs are provided, the tool will calculate the \
+        distance between each pair in each frame and output a distance matrix plot \
+        for the selected pairs. \
         You can use 'analysis' = 'all' to calculate the \
-    distance between all residue pairs in each frame. Or if interested in a \
-    specific pair, you can provide two selections of residues/atoms to calculate \
-    the distance between them.
+        distance between all residue pairs in each frame. Or if interested in a \
+        specific pair, you can provide two selections of residues/atoms to calculate \
+        the distance between them.
 
     Args:
-    trajectory_fileid (str): File ID of the trajectory file to be analyzed.
-    topology_fileid (str): File ID of the topology file associated with the trajectory.
-    analysis (Literal["all", "not all"], optional): Defines which residues to analyze.
-        - "all": Computes distances for all residues.
-        - "not all": Computes distances only for the selected residues \
-            (selection1 and selection2).
-        Defaults to "all".
-    mode (Literal["CA", "COM"], optional): Determines the method for \
-        distance calculation.
-        - "CA": Uses alpha carbons (Cα).
-        - "COM": Uses the center of mass (COM) of the residues.
-        Defaults to "CA".
-    selection1 (Optional[str], optional): Selection of residue IDs for the first group.
-        - Example: "resid 0 to 10" or "resid 0 1 2 3 4 5 6 7 8 9 10".
-        Required if `analysis` is set to "not all".
-    selection2 (Optional[str], optional): Selection of residue IDs for the second group.
-        - Example: "resid 0 to 10" or "resid 0 1 2 3 4 5 6 7 8 9 10".
-        Required if `analysis` is set to "not all".
+        trajectory_fileid (str): File ID of the trajectory file to be analyzed.
+        topology_fileid (str): File ID of the topology file associated with the trajectory.
+        analysis (Literal["all", "not all"], optional): Defines which residues to analyze.
+            - "all": Computes distances for all residues.
+            - "not all": Computes distances only for the selected residues \
+                (selection1 and selection2).
+            Defaults to "all".
+        mode (Literal["CA", "COM"], optional): Determines the method for \
+            distance calculation.
+            - "CA": Uses alpha carbons (Cα).
+            - "COM": Uses the center of mass (COM) of the residues.
+            Defaults to "CA".
+        selection1 (Optional[str], optional): Selection of residue IDs for the first group.
+            - Example: "resid 0 to 10" or "resid 0 1 2 3 4 5 6 7 8 9 10".
+            Required if `analysis` is set to "not all".
+        selection2 (Optional[str], optional): Selection of residue IDs for the second group.
+            - Example: "resid 0 to 10" or "resid 0 1 2 3 4 5 6 7 8 9 10".
+            Required if `analysis` is set to "not all".
     """
 
     input = {
@@ -300,7 +302,7 @@ def compute_distance(
         mode,
         error,
         system_message,
-    ) = get_distance_values(input)
+    ) = get_distance_values(**input)
 
     if error:
         return f"Failed. Error with the tool inputs: {error} ", 0, False
@@ -340,9 +342,8 @@ def compute_distance(
                     "'.pdb', '.pdb.gz', '.h5', '.lh5', '.prmtop', '.parm7', '.prm7',"
                     "  '.psf', '.mol2', '.hoomdxml', '.gro', '.arc', '.hdf5' and '.gsd'"
                 ),
-            )
             0,
-            False
+            False)
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
     except Exception as e:
         return f"Failed. Error loading trajectory: {str(e)}", 0, False
@@ -380,7 +381,7 @@ def compute_distance(
     )
 
 
-def validate_contact_inputs(path_registry, input):
+def validate_contact_inputs(path_registry, **input):
     input = input.get("action_input", input)
     input = input.get("input", input)
     trajectory_id = input.get("trajectory_fileid", None)
@@ -419,7 +420,7 @@ def validate_contact_inputs(path_registry, input):
     }
 
 
-def get_contact_values(input):
+def get_contact_values(**input):
     traj_id = input.get("trajectory_fileid")
     top_id = input.get("topology_fileid")
     sel = input.get("selection")
@@ -430,7 +431,7 @@ def get_contact_values(input):
     return traj_id, top_id, sel, cutoff, error, syst_mes
 
 
-def compute_contacts(
+async def compute_contacts(
     state: MDCrowState,
     trajectory_fileid: str,
     topology_fileid: str,
@@ -438,9 +439,10 @@ def compute_contacts(
     cutoff: float = 0.8,
 ):
     """
-    Tool for computing the distance between pairs of residues in a trajectory. \
-    If distance is under the cutoff is considered a contact. The output is a \
-    matrix plot where each contact between residues is represented by a dot.
+    Description:
+        Tool for computing the distance between pairs of residues in a trajectory. 
+        If distance is under the cutoff is considered a contact. The output is a 
+        matrix plot where each contact between residues is represented by a dot.
 
     Args:
         trajectory_fileid (str): File ID of the trajectory file to be analyzed.
@@ -460,7 +462,7 @@ def compute_contacts(
         "cutoff": cutoff,
     }
     try:
-        input = validate_contact_inputs(**input)
+        input = validate_contact_inputs(state.path_registry,**input)
     except ValueError as e:
         return f"Failed. Error using the Contacts Tool: {str(e)}"
     (
@@ -470,7 +472,7 @@ def compute_contacts(
         cutoff,
         error,
         system_message,
-    ) = get_contact_values(input)
+    ) = get_contact_values(**input)
 
     if error:
         return f"Failed. Error with the tool inputs: {error} ", 0, False

@@ -46,18 +46,16 @@ async def summarize_protein_structure(
     requested_analyses: Optional[list[str]] = None,
 ):
     """
+    Description:
         Get the number of atoms, residues, chains, frames, and bonds in a \
         protein trajectory. Input is a trajectory file ID and an optional topology \
         file ID. The output is a dictionary containing the analyses.
-        Args:
-            traj_fileid (str): The trajectory to summarize the
-                structure.
-            top_fileid (str): The topology file for the trajectory.
-            requested_analyses Optional[list[str]]: A list of the analyses
-                to include in the summary.
 
-        Returns:
-            A dictionary containing the requested analyses.
+    Args:
+        traj_file (str): The trajectory file ID.
+        top_file (str,optional): The topology file for the trajectory.
+        requested_analyses (list[str], optional): A list of the analyses to include in \
+            the summary.
     """
     try:
         traj = load_single_traj(

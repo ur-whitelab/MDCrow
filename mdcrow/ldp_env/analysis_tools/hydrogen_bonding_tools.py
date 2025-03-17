@@ -69,10 +69,16 @@ def compute_hbonds(
     freq: Optional[float] = 0.3,
 ):
     """
-    Identifies hydrogen bonds and plots the results from the
-    provided trajectory data.
-    Input the File ID for the trajectory file and optionally the topology file.
-    The tool will output the file ID of the results and plot.
+    Description:
+        Identifies hydrogen bonds and plots the results from the
+        provided trajectory data.
+        Input the File ID for the trajectory file and optionally the topology file.
+        The tool will output the file ID of the results and plot.
+    Args:
+        state: MDCrowState
+        top_file: str - File ID for the topology file
+        traj_file: str | None = None - File ID for the trajectory file
+        freq: Optional[float] = 0.3 - Frequency for hydrogen bond analysis
     """
     try:
         traj_file = (

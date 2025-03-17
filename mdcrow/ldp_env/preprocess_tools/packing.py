@@ -360,25 +360,31 @@ def pack_molecules(
     instructions: Optional[List[List[str]]],
 ):
     """
-        Useful when you need to create a box of different types of chemical species.\n
-        Three different examples:\n
-        pdbfile_ids: ['1a2b_123456']\n
-        small_molecules: ['water'] \n
-        number_of_molecules: [1, 1000]\n
-        instructions: [['fixed 0. 0. 0. 0. 0. 0. \n centerofmass'],
-        ['inside box 0. 0. 0. 90. 90. 90.']]\n
+    Description:
+        Useful when you need to create a box of different types of chemical species.
+        Three different examples:
+        pdbfile_ids: ['1a2b_123456']
+        small_molecules: ['water'] 
+        number_of_molecules: [1, 1000]
+        instructions: [
+        ['fixed 0. 0. 0. 0. 0. 0.'
+          centerofmass'],
+        ['inside box 0. 0. 0. 90. 90. 90.']
+        ]
         will pack 1 molecule of 1a2b_123456 at the origin
-        and 1000 molecules of water. \n
-        pdbfiles_id: ['1a2b_123456']\n
-        number_of_molecules: [1]\n
-        instructions: [['fixed  0. 0. 0. 0. 0. 0.' \n center]]\n
+        and 1000 molecules of water. 
+        pdbfiles_id: ['1a2b_123456']
+        number_of_molecules: [1]
+        instructions: [['fixed  0. 0. 0. 0. 0. 0.'
+          center]]
         This will fix the barocenter of protein 1a2b_123456 at
-        the center of the box with no rotation.\n
-        pdbfiles_id: ['1a2b_123456']\n
-        number_of_molecules: [1]\n
-        instructions: [['outside sphere 2.30 3.40 4.50 8.0]]\n
+        the center of the box with no rotation.
+        pdbfiles_id: ['1a2b_123456']
+        number_of_molecules: [1]
+        instructions: [['outside sphere 2.30 3.40 4.50 8.0]]
         This will place the protein 1a2b_123456 outside a sphere
-        centered at 2.30 3.40 4.50 with radius 8.0\n
+        centered at 2.30 3.40 4.50 with radius 8.0
+
     Args:
         pdbfile_ids (Optional[List[str]]): List of PDB file IDs (from path registry) \
             to be packed into the box.

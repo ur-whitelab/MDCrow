@@ -113,12 +113,13 @@ def compute_solvent_accessible_surface_area(
     molecule_name: Optional[str] = None,
 ):
     """
-    Computes the Solvent Accessible Surface Area (SASA) for a molecule or protein.
+    Description:
+        Computes the Solvent Accessible Surface Area (SASA) for a molecule or protein.
 
     Args:
-    top_fileid (str): File ID for the topology file.
-    traj_fileid (str, optional): File ID for the trajectory file.
-    molecule_name (str, optional): Name of the molecule or protein.
+        top_fileid (str): File ID for the topology file.
+        traj_fileid (str, optional): File ID for the trajectory file.
+        molecule_name (str, optional): Name of the molecule or protein.
     """
     try:
         sasa_analysis = SASAFunctions(
