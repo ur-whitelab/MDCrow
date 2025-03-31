@@ -6,8 +6,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
-from state import MDCrowState
-from utils import FileType, load_single_traj
+
+from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import FileType, load_single_traj
 
 
 def validate_input(path_registry, **input):

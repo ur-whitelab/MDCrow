@@ -3,7 +3,8 @@ from typing import Optional
 
 import mdtraj as md
 import numpy as np
-from state import MDCrowState
+
+from mdcrow.ldp_env.state import MDCrowState
 
 
 def ppi_distance(file_path, binding_site="protein"):

@@ -2,8 +2,9 @@ from typing import Optional
 
 import mdtraj as md
 import numpy as np
-from state import MDCrowState
-from utils import FileType, PathRegistry, load_single_traj
+
+from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import FileType, PathRegistry, load_single_traj
 
 
 def _summarize_protein_structure(
@@ -66,14 +67,14 @@ async def summarize_protein_structure(
         if not traj:
             raise Exception("Trajectory could not be loaded.")
     except Exception as e:
-        return str(e), 0, False
+        return "Failed. " + str(e), 0, False
     try:
         result = _summarize_protein_structure(
             traj, requested_analyses=requested_analyses
         )
     except Exception as e:
-        return str(e), 0, False
-    return str(result), 0, False
+        return "Failed. " + str(e), 0, False
+    return "Succeeded. " + str(result), 0, False
 
 
 def _dssp_codes(simplified) -> list[str]:
@@ -254,9 +255,9 @@ async def computeDSSP(
         traj = _get_frame(traj, target_frames)
     except Exception as e:
         print("Error loading trajectory: ", e)
-        return str(e), 0, False
+        return "Failed. " + str(e), 0, False
 
     dssp_array = _compute_dssp(traj, simplified=simplified)
     write_raw_x("dssp", dssp_array, traj_file, state.path_registry)
     summary = _summarize_dssp(dssp_array, simplified=simplified)
-    return str(summary), 0, False
+    return "Succeeded. " + str(summary), 0, False

@@ -10,8 +10,9 @@ import mdtraj as md
 import numpy as np
 import pandas as pd
 from matplotlib.animation import FuncAnimation
-from state import MDCrowState
-from utils import FileType, PathRegistry, load_single_traj
+
+from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import FileType, PathRegistry, load_single_traj
 
 
 class DistanceToolsUtils:

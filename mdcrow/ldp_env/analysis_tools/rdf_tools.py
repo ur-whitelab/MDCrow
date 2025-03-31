@@ -2,8 +2,9 @@ from typing import List, Optional
 
 import matplotlib.pyplot as plt
 import mdtraj as md
-from state import MDCrowState
-from utils import FileType
+
+from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import FileType
 
 
 def validate_input(path_registry, input):
@@ -21,7 +22,7 @@ def validate_input(path_registry, input):
 
     if not trajectory_id:
         raise ValueError(
-            "Incorrect Inputs: Trajectory file ID ('trajectory_fileid')is required"
+            "Incorrect Inputs: Trajectory file ID ('trajectory_fileid') is required"
         )
 
     # check if trajectory id is valid
