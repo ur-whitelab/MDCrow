@@ -1,16 +1,17 @@
 from aviary.core import Message, Tool
 from pydantic import BaseModel, ConfigDict, Field
-from utils import PathRegistry
+
+from mdcrow.ldp_env.utils import PathRegistry
 
 
 class MDCrowState(BaseModel):
     # model_config = ConfigDict(extra="forbid")
+    path_registry: PathRegistry
     model_config = ConfigDict(arbitrary_types_allowed=True, extra="forbid")
     ckpt_dir: str = "ckpt"
     reward: float = 0.0
     steps: int = 0
     done: bool = False
-    path_registry: PathRegistry = None
 
     tools: list[Tool] = Field(default_factory=list)
     messages: list[Message] = Field(default_factory=list)
