@@ -6,6 +6,7 @@ def test_cleaning_function(get_registry):
 
     reg = get_registry("raw", True)
     state = MDCrowState(path_registry=reg)
+    tool = CleaningToolFunction(path_registry=reg)
     assert state.path_registry
     assert state.path_registry == reg
     prompt = {
