@@ -43,10 +43,11 @@ from preprocess_tools import (
 )
 from pydantic import BaseModel, ConfigDict, Field
 from simulation_tools import modify_simulation_script, setup_and_run_simulation
-from state import MDCrowState
+from util_tools import ListRegistryPaths, MapPath2Name, scholar2result_llm
 
 from ldp.agent import Agent
 from ldp.graph import LLMCallOp, OpResult, compute_graph
+from mdcrow.ldp_env.state import MDCrowState
 
 load_dotenv()
 
@@ -147,6 +148,10 @@ class MDCrowEnv(Environment[None]):
             # simulation tools
             Tool.from_function(setup_and_run_simulation),
             Tool.from_function(modify_simulation_script),
+            # util tools
+            Tool.from_function(MapPath2Name),
+            Tool.from_function(ListRegistryPaths),
+            Tool.from_function(scholar2result_llm),
             # analysis tools
             Tool.from_function(compute_rmsd),
             Tool.from_function(compute_rmsf),
@@ -186,6 +191,10 @@ class MDCrowEnv(Environment[None]):
                             # simulation tools
                             f" {setup_and_run_simulation.__name__}"
                             f" {modify_simulation_script.__name__} or"
+                            # util tools
+                            f" {MapPath2Name.__name__} or"
+                            f" {ListRegistryPaths.__name__} or"
+                            f" {scholar2result_llm.__name__} or"
                             # analysis tools
                             f" {compute_rmsd.__name__} or"
                             f" {compute_rmsf.__name__} or"
@@ -308,7 +317,7 @@ class MDCrowEnv(Environment[None]):
 
 
 env = MDCrowEnv.from_task(
-    "Download 1PGA structure from PDB clean, simulate and compute contact and distance matrix."
+    "Download 1PGA structure from PDB clean, simulate and compute dssp codes."
 )
 agent = MySimpleAgent()
 
@@ -324,6 +333,8 @@ async def main(idx: int = 0):
     # Get initial agent state
     agent_state = await agent.init_state(tools=tools, path_registry=None)
     # print("\n",agent_state.messages)
+    print("-" * 80)
+    print(agent_state.path_registry)
     step = 1
     done = False
     while not done:
