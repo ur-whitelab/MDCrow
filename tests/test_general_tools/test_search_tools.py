@@ -1,23 +1,20 @@
 import pytest
-from langchain_openai import ChatOpenAI
 
-from mdcrow.tools.base_tools import Scholar2ResultLLM
+from mdcrow.ldp_env.analysis_tools.scholar import scholar2result_llm
+from mdcrow.ldp_env.state import MDCrowState
 
 
 @pytest.fixture
-def questions():
-    qs = [
-        "What are the effects of norhalichondrin B in mammals?",
-    ]
-    return qs[0]
+def question():
+    return "What are the effects of norhalichondrin B in mammals?"
 
 
-@pytest.mark.skip(reason="This requires an API call")
-def test_litsearch(questions, get_registry):
-    llm = ChatOpenAI()
+@pytest.mark.skip(reason="Requires actual API call and local PDFs in paper directory.")
+def test_scholar2result_llm(question, get_registry):
+    state = MDCrowState(path_registry=get_registry("raw", False))
+    result, code, stop_flag = scholar2result_llm(state, question)
 
-    searchtool = Scholar2ResultLLM(llm=llm, path_registry=get_registry("raw", False))
-    for q in questions:
-        ans = searchtool._run(q)
-        assert isinstance(ans, str)
-        assert len(ans) > 0
+    assert isinstance(result, str)
+    assert len(result) > 0
+    assert code == 0
+    assert stop_flag is False

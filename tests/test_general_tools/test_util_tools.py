@@ -7,7 +7,6 @@ from unittest.mock import mock_open, patch
 
 import pytest
 
-from mdcrow.agent.agent import MDCrow
 from mdcrow.utils import FileType, PathRegistry, SetCheckpoint
 
 
@@ -231,14 +230,6 @@ def test_path_registry_ckpt(get_registry):
         assert os.path.isdir(ckpt)
 
 
-def test_mdcrow_w_ckpt():
-    dummy_test_dir = "ckpt_test"
-    mdcrow = MDCrow(ckpt_dir=dummy_test_dir)
-    dummy_test_path = mdcrow.path_registry.ckpt_dir
-    assert os.path.exists(dummy_test_path)
-    assert dummy_test_dir in dummy_test_path
-
-
 @pytest.fixture
 def root_dir(set_ckpt):
     return set_ckpt.find_root_dir()
@@ -302,7 +293,3 @@ def test_path_registry_w_ckpt():
         os.path.dirname(path_registry.json_file_path)
     )
     shutil.rmtree(os.path.dirname(path_registry.json_file_path))
-
-
-def test_get_iteration_number():
-    pass
