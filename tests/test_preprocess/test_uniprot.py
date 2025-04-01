@@ -1,11 +1,40 @@
 import pytest
 
-from mdcrow.ldp_env.preprocess_tools.uniprot import QueryUniprot
+from mdcrow.ldp_env.preprocess_tools.uniprot import GetAllKnownSites, QueryUniprot
+from mdcrow.ldp_env.state import MDCrowState
 
 
 @pytest.fixture()
 def query_uniprot():
     return QueryUniprot()
+
+
+def test_get_all_known_sites(get_registry):
+    state = MDCrowState([], path_registry=get_registry("raw", False))
+
+    site_msg, _, _ = GetAllKnownSites(
+        state, query="hemoglobin", primary_accession="P69905"
+    )
+    assert "No known active sites." in site_msg
+
+    assert (
+        "Binding Sites: [{'start': 59, "
+        "'start_modifier': 'EXACT', 'end': 59, "
+        "'end_modifier': 'EXACT', 'description': "
+        "'', 'evidences': [{'evidenceCode': "
+        "'ECO:0000255', 'source': 'PROSITE-ProRule', "
+        "'id': 'PRU00238'}]},"
+    ) in site_msg
+
+    assert (
+        "Other Relevant Sites: [{'start': 9, "
+        "'start_modifier': 'EXACT', 'end': 10, "
+        "'end_modifier': 'EXACT', 'description': "
+        "'(Microbial infection) Cleavage; by "
+        "N.americanus apr-2', 'evidences': "
+        "[{'evidenceCode': 'ECO:0000269', 'source': "
+        "'PubMed', 'id': '12552433'}]}"
+    ) in site_msg
 
 
 def test_match_primary_accession(query_uniprot):
