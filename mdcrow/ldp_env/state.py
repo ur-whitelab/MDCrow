@@ -17,9 +17,19 @@ class MDCrowState(BaseModel):
     messages: list[Message] = Field(default_factory=list)
 
     def __init__(
-        self, tools, path_registry=None, ckpt_dir="ckpt", paper_dir=None, messages=None
+        self,
+        tools: list,
+        path_registry: PathRegistry,
+        ckpt_dir="ckpt",
+        paper_dir=None,
+        messages=None,
     ):
-        super().__init__()
+        super().__init__(
+            path_registry=path_registry,
+            ckpt_dir=path_registry.ckpt_dir or ckpt_dir,
+            tools=tools,
+            messages=messages or [],
+        )
 
         if path_registry is None:
             self.path_registry = PathRegistry.get_instance(ckpt_dir)
