@@ -2,12 +2,14 @@ import pytest
 from openmm import unit
 from openmm.app import PME, HBonds
 
-from mdcrow.tools.base_tools.simulation_tools import SetUpandRunFunction
-
-
-@pytest.fixture
-def setupandrun(get_registry):
-    return SetUpandRunFunction(path_registry=get_registry("raw", False))
+from mdcrow.ldp_env.simulation_tools.set_up_and_run import (
+    _parse_cutoff,
+    _process_parameters,
+    parse_friction,
+    parse_pressure,
+    parse_temperature,
+    parse_timestep,
+)
 
 
 @pytest.mark.parametrize(
@@ -18,20 +20,20 @@ def setupandrun(get_registry):
         ("2angstroms", unit.Quantity(2.0, unit.angstroms)),
     ],
 )
-def test_parse_cutoff(setupandrun, input_cutoff, expected_result):
-    result = setupandrun._parse_cutoff(input_cutoff)
+def test_parse_cutoff(input_cutoff, expected_result):
+    result = _parse_cutoff(input_cutoff)
     assert expected_result == result
 
 
-def test_parse_cutoff_unknown_unit(setupandrun):
+def test_parse_cutoff_unknown_unit():
     with pytest.raises(ValueError) as e:
-        setupandrun._parse_cutoff("2pc")
+        _parse_cutoff("2pc")
     assert "Unknown unit" in str(e.value)
 
 
-def test_parse_temperature(setupandrun):
-    result = setupandrun.parse_temperature("300k")
-    result2 = setupandrun.parse_temperature("300kelvin")
+def test_parse_temperature():
+    result = parse_temperature("300k")
+    result2 = parse_temperature("300kelvin")
     expected_result = unit.Quantity(300, unit.kelvin)
     assert expected_result == result[0] == result2[0]
 
@@ -49,8 +51,8 @@ def test_parse_temperature(setupandrun):
         ("1*ps^-1", unit.Quantity(1, 1 / unit.picoseconds)),
     ],
 )
-def test_parse_friction(setupandrun, input_friction, expected_friction_result):
-    result = setupandrun.parse_friction(input_friction)
+def test_parse_friction(input_friction, expected_friction_result):
+    result = parse_friction(input_friction)
     assert (
         expected_friction_result == result[0]
     ), f"Expected {expected_friction_result} for {input_friction}, got {result[0]}"
@@ -70,8 +72,8 @@ def test_parse_friction(setupandrun, input_friction, expected_friction_result):
         ("1nanoseconds", unit.nanoseconds),
     ],
 )
-def test_parse_time(setupandrun, input_time, expected_time_unit):
-    result = setupandrun.parse_timestep(input_time)
+def test_parse_time(input_time, expected_time_unit):
+    result = parse_timestep(input_time)
     expected_result = unit.Quantity(1, expected_time_unit)
     assert expected_result == result[0]
 
@@ -89,8 +91,8 @@ def test_parse_time(setupandrun, input_time, expected_time_unit):
         ("1psi", unit.psi),
     ],
 )
-def test_parse_pressure(setupandrun, input_pressure, expected_pressure_unit):
-    result = setupandrun.parse_pressure(input_pressure)
+def test_parse_pressure(input_pressure, expected_pressure_unit):
+    result = parse_pressure(input_pressure)
     expected_result = unit.Quantity(1, expected_pressure_unit)
     # assert expected_result == result[0]
     if expected_result != result[0]:
@@ -99,13 +101,13 @@ def test_parse_pressure(setupandrun, input_pressure, expected_pressure_unit):
         )
 
 
-def test_process_parameters(setupandrun):
+def test_process_parameters():
     parameters = {
         "nonbondedMethod": "PME",
         "constraints": "HBonds",
         "rigidWater": True,
     }
-    result = setupandrun._process_parameters(parameters)
+    result = _process_parameters(parameters)
     expected_result = {
         "nonbondedMethod": PME,
         "constraints": HBonds,
