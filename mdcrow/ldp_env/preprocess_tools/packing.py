@@ -4,8 +4,8 @@ import subprocess
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import ValidationError
-from state import MDCrowState
-from utils import PathRegistry
+
+from mdcrow.ldp_env.state import MDCrowState
 
 from .pdb_fix import Validate_Fix_PDB
 from .small_mol import MolPDB
@@ -214,7 +214,7 @@ def _get_sm_pdbs(state, small_molecules):
     print("Small molecules PDBs created successfully")
 
 
-def validate_input(values: Union[str, Dict[str, Any]]) -> Dict:
+def validate_input(state, values: Union[str, Dict[str, Any]]) -> Dict:
     # check if is only a string
     if isinstance(values, str):
         print("values is a string", values)
@@ -262,7 +262,7 @@ def validate_input(values: Union[str, Dict[str, Any]]) -> Dict:
             ),
             **values,
         }
-    registry = PathRegistry.get_instance()
+    registry = state.path_registry
     molPDB = MolPDB(registry)
     for instruction in instructions:
         if len(instruction) != 1:
@@ -364,7 +364,7 @@ def pack_molecules(
         Useful when you need to create a box of different types of chemical species.
         Three different examples:
         pdbfile_ids: ['1a2b_123456']
-        small_molecules: ['water'] 
+        small_molecules: ['water']
         number_of_molecules: [1, 1000]
         instructions: [
         ['fixed 0. 0. 0. 0. 0. 0.'
@@ -372,7 +372,7 @@ def pack_molecules(
         ['inside box 0. 0. 0. 90. 90. 90.']
         ]
         will pack 1 molecule of 1a2b_123456 at the origin
-        and 1000 molecules of water. 
+        and 1000 molecules of water.
         pdbfiles_id: ['1a2b_123456']
         number_of_molecules: [1]
         instructions: [['fixed  0. 0. 0. 0. 0. 0.'
@@ -386,6 +386,7 @@ def pack_molecules(
         centered at 2.30 3.40 4.50 with radius 8.0
 
     Args:
+        state (MDCrowState): The current state of the MDCrow environment.
         pdbfile_ids (Optional[List[str]]): List of PDB file IDs (from path registry) \
             to be packed into the box.
         small_molecules (Optional[List[str]], optional): List of small molecules to \
@@ -411,7 +412,7 @@ def pack_molecules(
     if state.path_registry is None:  # this should not happen
         raise ValidationError("Path registry not initialized")
     try:
-        values = validate_input(values)
+        values = validate_input(state, values)
     except ValidationError as e:
         return f"Failed. ValidationError: {e}"
     (

@@ -1,7 +1,8 @@
 import requests
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from state import MDCrowState
+
+from mdcrow.ldp_env.state import MDCrowState
 
 
 class MolPDB:

@@ -3,8 +3,8 @@ import os
 import requests
 
 # from ..path_registryutils.path_registry import PathRegistry
-from state import MDCrowState
-from utils import FileType
+from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import FileType
 
 
 async def download_pdb_file(query_string: str, state: MDCrowState):

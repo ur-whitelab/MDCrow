@@ -2,13 +2,13 @@ from openmm.app import PDBFile, PDBxFile
 from pdbfixer import PDBFixer
 
 # from ..path_registryutils.path_registry import PathRegistry
-from state import MDCrowState
-from utils import FileType
+from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import FileType
 
 
 async def clean_pdb_file(
-    pdb_id: str,
     state: MDCrowState,
+    pdb_id: str,
     replace_nonstandard_residues: bool = True,
     add_missing_atoms: bool = True,
     remove_heterogens: bool = True,
