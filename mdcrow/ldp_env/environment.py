@@ -177,7 +177,6 @@ class MDCrowEnv(Environment[None]):
             Tool.from_function(GetRelevantSites),
             Tool.from_function(GetSequenceInfo),
             Tool.from_function(GetSubunitStructure),
-            Tool.from_function(GetUniprotID),
             # simulation tools
             Tool.from_function(setup_and_run_simulation),
             Tool.from_function(modify_simulation_script),
@@ -221,6 +220,22 @@ class MDCrowEnv(Environment[None]):
                             f" {clean_pdb_file.__name__} or"
                             f" {get_small_molecule_PDB.__name__} or"
                             f" {pack_molecules.__name__} or"
+                            f" {GetUniprotID.__name__} or"
+                            f" {GetTurnsBetaSheetsHelices.__name__} or"
+                            f" {GetActiveSites.__name__} or"
+                            f" {GetAllKnownSites.__name__} or"
+                            f" {GetAllSequences.__name__} or"
+                            f" {GetBindingSites.__name__} or"
+                            f" {GetGeneNames.__name__} or"
+                            f" {GetInteractions.__name__} or"
+                            f" {GetKineticProperties.__name__} or"
+                            f" {GetPDB3DInfo.__name__} or"
+                            f" {GetPDBProcessingInfo.__name__} or"
+                            f" {GetProteinAssociatedKeywords.__name__} or"
+                            f" {GetProteinFunction.__name__} or"
+                            f" {GetRelevantSites.__name__} or"
+                            f" {GetSequenceInfo.__name__} or"
+                            f" {GetSubunitStructure.__name__} or"
                             # simulation tools
                             f" {setup_and_run_simulation.__name__}"
                             f" {modify_simulation_script.__name__} or"
