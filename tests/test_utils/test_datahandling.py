@@ -4,12 +4,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from mdcrow.utils import load_single_traj, load_traj_with_ref, save_plot, save_to_csv
+from mdcrow.ldp_env.utils import (
+    load_single_traj,
+    load_traj_with_ref,
+    save_plot,
+    save_to_csv,
+)
 
 
 @pytest.fixture
 def load_single_traj_mock():
-    with patch("mdcrow.utils.data_handling.load_single_traj", return_value="MockTraj"):
+    with patch(
+        "mdcrow.ldp_env.utils.data_handling.load_single_traj", return_value="MockTraj"
+    ):
         yield
 
 
@@ -72,7 +79,7 @@ def test_save_plot_success(get_registry):
     path_registry = get_registry("raw", False)
     fig, ax = plt.subplots()
     ax.plot([1, 2, 3], [1, 2, 3])  # Create a plot
-    with patch("mdcrow.utils.data_handling.plt.savefig"):
+    with patch("mdcrow.ldp_env.utils.data_handling.plt.savefig"):
         fig_id = save_plot(path_registry, "test_data", "Test plot")
         assert "fig0_" in fig_id
 
