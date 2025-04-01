@@ -26,7 +26,7 @@ class MDCrowState(BaseModel):
     ):
         super().__init__(
             path_registry=path_registry,
-            ckpt_dir=path_registry.ckpt_dir or ckpt_dir,
+            ckpt_dir=ckpt_dir,
             tools=tools,
             messages=messages or [],
         )
