@@ -1,25 +1,19 @@
 import os
-import pytest
-from unittest.mock import patch, MagicMock
 
-from mdcrow.ldp_env.preprocess_tools.packing import (
-    validate_input,
-    get_values,
-    pack_molecules,
-    PackmolBox,
-    Molecule,
-)
+import pytest
+
+from mdcrow.ldp_env.preprocess_tools.packing import Molecule, PackmolBox, validate_input
 from mdcrow.ldp_env.state import MDCrowState
-from mdcrow.ldp_env.utils import PathRegistry
 
 
 @pytest.fixture
 def packmolbox(get_registry):
     return PackmolBox(path_registry=get_registry("raw", False))
 
+
 @pytest.fixture
 def state(get_registry):
-    return MDCrowState([],path_registry=get_registry("raw", False))
+    return MDCrowState([], path_registry=get_registry("raw", False))
 
 
 @pytest.fixture
@@ -41,16 +35,19 @@ def valid_input():
         ],
     }
 
+
 def test_packmol_add_molecule(packmolbox, dummy_molecule):
     initial_length = len(packmolbox.molecules)
     packmolbox.add_molecule(dummy_molecule)
     assert len(packmolbox.molecules) == initial_length + 1
+
 
 def test_packmol_generate_input_header(packmolbox):
     packmolbox.generate_input_header()
     # assert file packmol.inp exists
     assert os.path.isfile("packmol.inp")
     os.remove("packmol.inp")
+
 
 def test_packmol_generate_input(packmolbox, dummy_molecule):
     packmolbox.add_molecule(dummy_molecule)
@@ -59,10 +56,11 @@ def test_packmol_generate_input(packmolbox, dummy_molecule):
     assert "number 2" in output
     assert "end structure" in output
 
-def test_packmol_validate_input_missing_info(valid_input,state):
+
+def test_packmol_validate_input_missing_info(valid_input, state):
     example_input = valid_input
     example_input["pdbfile_ids"] = []
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert "error" in input_valid.keys()
     assert (
         "The length of number_of_molecules AND "
@@ -72,7 +70,7 @@ def test_packmol_validate_input_missing_info(valid_input,state):
     )
 
     example_input["pdbfile_ids"] = ["nonsense"]
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert "error" in input_valid.keys()
     assert (
         input_valid["error"]
@@ -93,25 +91,24 @@ def test_packmol_validate_input_missing_info(valid_input,state):
     state.path_registry.map_path("3pqr_test", "3pqr.cif", "cif_test_file")
     example_input["pdbfile_ids"] = ["3pqr_test"]
     example_input["small_molecules"] = ["nonsense"]
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert "error" in input_valid.keys()
     assert "nonsense could not be converted to a pdb file" in input_valid["error"]
 
 
-
-def test_pacmol_validate_input_instruction_fail(state,valid_input):
+def test_pacmol_validate_input_instruction_fail(state, valid_input):
     example_input = valid_input
     # example_input["small_molecules"] = ["water"]
     example_input["instructions"] = [
         ["fail 0. 0. 0. 0. 0. 0. centerofmass"],
         ["inside box 0. 0. 0. 90. 90. 90."],
     ]
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert "error" in input_valid.keys()
     assert "The first word of each instruction must be one of" in input_valid["error"]
 
     example_input["instructions"] = [["center"], [["inside box 0. 0. 0. 90. 90. 90."]]]
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert "error" in input_valid.keys()
     assert (
         "The instruction 'center' must be accompanied by more instructions"
@@ -124,17 +121,16 @@ def test_pacmol_validate_input_instruction_fail(state,valid_input):
         example_input["instructions"],
     ]
     assert len(example_input["instructions"]) == 2
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert "error" in input_valid.keys()
     assert "Each instruction must be a single string" in input_valid["error"]
-
 
 
 def test_packmol_validate_input_valid(get_registry):
     registry = get_registry("raw", False)
     registry.map_path("3pqr_test", "3pqr.cif", "cif_test_file")
     registry.map_path("water", "water.pdb", "fake_water_test_file")
-    state= MDCrowState([], path_registry=registry)
+    state = MDCrowState([], path_registry=registry)
     example_input = {
         "pdbfile_ids": ["3pqr_test"],
         "small_molecules": ["water"],
@@ -144,7 +140,7 @@ def test_packmol_validate_input_valid(get_registry):
             ["inside box 0. 0. 0. 90. 90. 90."],
         ],
     }
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert input_valid == example_input
 
     example_input["small_molecules"] = ["water", "urea"]
@@ -155,5 +151,5 @@ def test_packmol_validate_input_valid(get_registry):
         example_input["instructions"][0],
     ]
     example_input["number_of_molecules"] = [1, 2, 2]
-    input_valid = validate_input(state,example_input)
+    input_valid = validate_input(state, example_input)
     assert input_valid == example_input
