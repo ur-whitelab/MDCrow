@@ -1,3 +1,5 @@
+import asyncio
+
 from mdcrow.ldp_env.preprocess_tools.clean_tools import clean_pdb_file
 from mdcrow.ldp_env.state import MDCrowState
 
@@ -5,7 +7,7 @@ from mdcrow.ldp_env.state import MDCrowState
 def test_cleaning_function(get_registry):
 
     reg = get_registry("raw", True)
-    state = MDCrowState(path_registry=reg)
+    state = MDCrowState(tools=[], path_registry=reg)
     assert state.path_registry
     assert state.path_registry == reg
     prompt = {
@@ -17,5 +19,5 @@ def test_cleaning_function(get_registry):
         "add_hydrogens": True,
         "add_hydrogens_ph": 7.0,
     }
-    result, _, _ = clean_pdb_file(state, **prompt)
+    result, _, _ = asyncio.run(clean_pdb_file(state, **prompt))
     assert "File cleaned" in result
