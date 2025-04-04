@@ -1,4 +1,3 @@
-import asyncio
 import contextlib
 
 # import contextlib
@@ -22,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from ldp.agent import Agent
 from ldp.graph import LLMCallOp, OpResult, compute_graph
 from mdcrow.ldp_env.state import MDCrowState
+from mdcrow.ldp_env.utils import PathRegistry
 
 from .analysis_tools import (
     compute_bond_angles,
@@ -379,7 +379,8 @@ async def main(idx: int = 0):
     print(f"Question: {obs[0].content}")
 
     # Get initial agent state
-    agent_state = await agent.init_state(tools=tools, path_registry=None)
+    path_registry = PathRegistry.get_instance()
+    agent_state = await agent.init_state(tools=tools, path_registry=path_registry)
     # print("\n",agent_state.messages)
     print("-" * 80)
     print(agent_state.path_registry)
@@ -406,13 +407,3 @@ def print_action_obs(action: ToolRequestMessage, obs: list[ToolResponseMessage])
         tool_args = tool_call.function.arguments
         msg += f"agent action: {tool_name}({tool_args}), environment answer: {tool_answer.content} "
     return msg
-
-
-async def run_main():
-    for i in range(1):
-        await main(i)
-        # print(agent_state)
-
-
-if __name__ == "__main__":
-    asyncio.run(run_main())
