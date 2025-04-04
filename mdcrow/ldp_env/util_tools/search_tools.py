@@ -1,15 +1,19 @@
 import paperqa
 
+from mdcrow.ldp_env.state import MDCrowState
 llm_model_args = {
     "name": "gpt-4o-2024-08-06",
     "temperature": 0.5,
 }
 
 
-def scholar2result_llm(state, query):
+def scholar2result_llm(
+        state:MDCrowState, 
+        query:str
+        ):
     """
-     Useful to answer questions that may be found in literature.
-    Ask a specific question as the input.
+    Useful to answer questions that may be found in literature. Ask a 
+    specific question as the input.
 
     Args:
         state (MDCrowState): The state of the MDCrow environment.

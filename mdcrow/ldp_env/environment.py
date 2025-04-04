@@ -6,7 +6,24 @@ import json
 import os
 from typing import Any, Literal
 
-from analysis_tools import (
+from aviary.core import (
+    Environment,
+    Message,
+    Messages,
+    Tool,
+    ToolRequestMessage,
+    ToolResponseMessage,
+)
+
+# get secrets from environment variables
+from dotenv import load_dotenv
+from pydantic import BaseModel, ConfigDict, Field
+
+from ldp.agent import Agent
+from ldp.graph import LLMCallOp, OpResult, compute_graph
+from mdcrow.ldp_env.state import MDCrowState
+
+from .analysis_tools import (
     compute_bond_angles,
     compute_contacts,
     compute_distance,
@@ -24,18 +41,7 @@ from analysis_tools import (
     perform_pca_analysis,
     summarize_protein_structure,
 )
-from aviary.core import (
-    Environment,
-    Message,
-    Messages,
-    Tool,
-    ToolRequestMessage,
-    ToolResponseMessage,
-)
-
-# get secrets from environment variables
-from dotenv import load_dotenv
-from preprocess_tools import (
+from .preprocess_tools import (
     GetActiveSites,
     GetAllKnownSites,
     GetAllSequences,
@@ -57,13 +63,8 @@ from preprocess_tools import (
     get_small_molecule_PDB,
     pack_molecules,
 )
-from pydantic import BaseModel, ConfigDict, Field
-from simulation_tools import modify_simulation_script, setup_and_run_simulation
-from util_tools import ListRegistryPaths, MapPath2Name, scholar2result_llm
-
-from ldp.agent import Agent
-from ldp.graph import LLMCallOp, OpResult, compute_graph
-from mdcrow.ldp_env.state import MDCrowState
+from .simulation_tools import modify_simulation_script, setup_and_run_simulation
+from .util_tools import ListRegistryPaths, MapPath2Name, scholar2result_llm
 
 load_dotenv()
 
@@ -312,11 +313,14 @@ class MDCrowEnv(Environment[None]):
             False,
         )
 
-    def submit_answer(self, answer: str) -> tuple[bool, float, Literal[True]]:
+    def submit_answer(
+        self, answer: str, finished: bool
+    ) -> tuple[str, float, Literal[True]]:
         """Submit the proposed answer and check if it is correct. This action is terminal.
 
         Args:
             answer: Proposed answer.
+            finished: Whether the task is finished.
 
         Returns:
             Three-tuple of if correct, associated reward (correct_reward if correct,
@@ -324,18 +328,14 @@ class MDCrowEnv(Environment[None]):
                 True indicating done.
         """
         try:
-            correct: bool = (
-                abs(float(answer) - self.answer)
-                / (abs(self.answer) + self.config.rel_tol)
-                < self.config.rel_tol
-            )
+            answer = answer.strip()
             reward = (
-                self.config.correct_reward if correct else self.config.incorrect_reward
+                self.config.correct_reward if finished else self.config.incorrect_reward
             )
         except ValueError:
-            return False, self.config.tool_failure_reward, True
+            return answer, self.config.tool_failure_reward, True
         else:
-            return correct, reward, True
+            return answer, reward, True
 
     def calculator(self, expr: str) -> tuple[float | str, float, bool]:
         """Calculate a mathematical expression.
