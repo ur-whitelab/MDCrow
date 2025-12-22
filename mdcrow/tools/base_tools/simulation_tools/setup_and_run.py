@@ -1,6 +1,7 @@
 # Standard Library Imports
 import os
 import re
+from datetime import datetime
 
 # Third-Party Imports
 import textwrap
@@ -861,6 +862,9 @@ class OpenMMSimulation:
         print(f"Standalone simulation script written to {directory}/{filename}")
 
     def run(self):
+        sim_start = datetime.now()
+        print(f"[{sim_start.isoformat()}] Simulation started")
+
         # Minimize and Equilibrate
         print("Performing energy minimization...")
 
@@ -885,7 +889,11 @@ class OpenMMSimulation:
         print("Simulating...")
         self.simulation.currentStep = 0
         self.simulation.step(self.sim_params["Number of Steps"])
+        sim_end = datetime.now()
+        elapsed = (sim_end - sim_start).total_seconds()
         print("Done!")
+        print(f"[{sim_end.isoformat()}] Simulation ended")
+        print(f"Total simulation time: {elapsed:.2f}s")
         if not self.save:
             if os.path.exists("temp_trajectory.dcd"):
                 os.remove("temp_trajectory.dcd")
