@@ -262,7 +262,8 @@ class ComputeGyrationTensor(BaseTool):
         file_id = write_raw_x(
             "gyration_tensor", gyration_tensors, traj_file, self.path_registry
         )
-        return f"Gyration tensor computed successfully, saved to {file_id}"
+        return (f"Gyration tensor computed successfully, saved to {file_id}."
+                f"Multiple frames found. Here's result for 1st frame: {gyration_tensors[0]}")
 
     async def _arun(self, traj_file, top_file=None):
         """Runs the tool asynchronously."""
@@ -371,7 +372,9 @@ class ComputeAsphericity(BaseTool):
         return (
             "asphericity_values saved to "
             f"{raw_file_id}, plot saved to "
-            f"{plot_file_id}"
+            f"{plot_file_id}."
+            "Multiple frames found. "
+            f"Here's result for 1st frame: {asphericity_values[0]}"
         )
 
     async def _arun(self, traj_file, top_file):
@@ -442,7 +445,10 @@ class ComputeAcylindricity(BaseTool):
         return (
             "acylindricity_values saved to "
             f"{raw_file_id}, plot saved to "
-            f"{plot_file_id}"
+            f"{plot_file_id}."
+            "Multiple frames found. "
+            f"Here's result for 1st frame: {acylindricity_values[0]}"
+            
         )
 
     async def _arun(self, traj_file, top_file):
@@ -524,7 +530,9 @@ class ComputeRelativeShapeAntisotropy(BaseTool):
         return (
             "relative_shape_antisotropy_values saved to "
             f"{raw_file_id}, plot saved to "
-            f"{plot_file_id}"
+            f"{plot_file_id}."
+            "Multiple frames found. "
+            f"Here's result for 1st frame: {relative_shape_antisotropy_values[0]}"
         )
 
     async def _arun(self, traj_file, top_file):
