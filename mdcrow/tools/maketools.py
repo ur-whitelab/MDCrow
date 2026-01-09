@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from langchain import agents
 from langchain.base_language import BaseLanguageModel
 from langchain_openai import OpenAIEmbeddings
@@ -69,7 +69,7 @@ def make_all_tools(
     human=False,
     modifysim_no_run=False,
 ):
-    # load_dotenv()
+    load_dotenv()
     all_tools = []
     path_instance = PathRegistry.get_instance()  # get instance first
     if llm:
