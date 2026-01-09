@@ -1,7 +1,8 @@
 import os
 
 import numpy as np
-from dotenv import load_dotenv
+
+# from dotenv import load_dotenv
 from langchain import agents
 from langchain.base_language import BaseLanguageModel
 from langchain_openai import OpenAIEmbeddings
@@ -60,6 +61,7 @@ from .base_tools import (
     UniprotID2Name,
     VisualizeProtein,
 )
+from .gromacs_tools import PrepareGromacsProteinSystemTool, RunGromacsMDTool
 
 
 def make_all_tools(
@@ -67,7 +69,7 @@ def make_all_tools(
     human=False,
     modifysim_no_run=False,
 ):
-    load_dotenv()
+    # load_dotenv()
     all_tools = []
     path_instance = PathRegistry.get_instance()  # get instance first
     if llm:
@@ -131,6 +133,8 @@ def make_all_tools(
         GetUniprotID(),
         GetGeneNames(),
         GetKineticProperties(),
+        PrepareGromacsProteinSystemTool(path_registry=path_instance),
+        RunGromacsMDTool(path_registry=path_instance),
     ]
 
     all_tools += base_tools

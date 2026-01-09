@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from langchain.agents import AgentExecutor, OpenAIFunctionsAgent
 from langchain.agents.structured_chat.base import StructuredChatAgent
 
@@ -10,7 +10,7 @@ from ..utils import PathRegistry, SetCheckpoint, _make_llm
 from .memory import MemoryManager
 from .prompt import openaifxn_prompt, structured_prompt
 
-load_dotenv()
+# load_dotenv()
 
 
 class AgentType:
